@@ -360,3 +360,27 @@
 | pending_roles | number | 否 | 系統待完成人力角色數 | 200 |
 | urgent_requests | number | 否 | 系統緊急人力需求數 | 12 |
 | medical_requests | number | 否 | 系統醫療人力需求數 | 25 |
+
+# suppiles
+
+| 欄位名稱 | 資料類型 | 必填 | 說明 | 範例 |
+| --- | --- | --- | --- | --- |
+| id | string | 是 | 需求唯一識別碼 | 26f95ee9-e920-4f44-95a2-d40ded631893 |
+| name | string | 否 | 需要救援的單位名字 | OOOO |
+| address | string | 否 | 需要救援的單位地址 | OOOO |
+| phone | string | 否 | 需要救援的單位電話 | OOOO |
+| notes | string | 否 | 備註 | 無 |
+| created_at | number | 是 | 建立時間（Unix timestamp） | 1727664000 |
+| updated_at | number | 是 | 更新時間（Unix timestamp） | 1727750400 |
+
+# suppily_items 
+
+| 欄位名稱 | 資料類型 | 必填 | 說明 | 範例 |
+| --- | --- | --- | --- | --- |
+| id | string | 是 | 需求唯一識別碼 | 31f95ee9-e920-4f44-95a2-d40ded631893 |
+| suppily_id | string | 是 | 對應的物資單ID | 26f95ee9-e920-4f44-95a2-d40ded631893 |
+| tag | string | 否 | 物資總類 | 飲食 |
+| name | string | 否 | 物資名稱 | OOOO |
+| received_count | number | 否 | 已取得的物資數量 | 1 |
+| total_number | number | 是 | 總共所需的物資數量 | 3 |
+| unit | string | 否 | 物資的單位 | 箱 |
