@@ -12,13 +12,13 @@ CSV轉換為human_resources API插入腳本
 
 使用方法:
 1. 基本使用：
-   python csv_to_human_resources.py --csv "花蓮光復鄉家戶受災情形.csv" --api-url "http://localhost:8080"
+   python csv_to_human_resources.py --csv "data_test.csv" --api-url "https://guangfu250923.pttapp.cc/human_resources"
 
 2. 乾跑模式（只解析不發送API請求）：
-   python csv_to_human_resources.py --csv "檔案路徑.csv" --api-url "http://localhost:8080" --dry-run
+   python csv_to_human_resources.py --csv "data_test.csv" --api-url "https://guangfu250923.pttapp.cc/human_resources" --dry-run
 
 3. 指定批次大小：
-   python csv_to_human_resources.py --csv "檔案路徑.csv" --api-url "http://localhost:8080" --batch-size 10
+   python csv_to_human_resources.py --csv "data_test.csv" --api-url "https://guangfu250923.pttapp.cc/human_resources" --batch-size 10
 
 4. 查看幫助：
    python csv_to_human_resources.py --help
@@ -87,57 +87,47 @@ class CSVToHumanResourcesConverter:
 
             # 根據淤積程度判斷所需人力
             headcount_need = self._calculate_headcount_by_mud_level(mud_level)
-            role_type = self._determine_role_type(mud_level, furniture_removed, cleaning_stage)
-            role_name = self._determine_role_name(mud_level, furniture_removed, cleaning_stage)
-
-            # 判斷完成狀態
-            is_completed = cleaning_stage == "是" and furniture_removed == "是"
-            status = "completed" if is_completed else "active"
-            role_status = "completed" if is_completed else "pending"
-            headcount_got = headcount_need if is_completed else 0
 
             # 解析更新時間
             updated_at = self._parse_datetime(last_update_date, last_update_time)
 
-            # 根據等級判斷緊急程度
-            is_urgent = priority_level in ["1級", "2級", "3級"]
-
-            # 生成唯一ID
-            record_id = f"hr-{uuid.uuid4()}"
-
             human_resource_record = {
-                "id": record_id,
-                "org": "光復鄉災後重建志工隊",  # 預設組織名稱
+                "org": "受災戶 (0930匯入)",  # 預設組織名稱
                 "address": address,
-                "phone": "03-8701129",  # 預設聯絡電話（光復鄉公所）
-                "status": status,
-                "is_completed": is_completed,
+                "phone": "現場報到",  # 預設聯絡電話（光復鄉公所）
+                "status": "active",
+                "is_completed": False,
                 "has_medical": False,  # 預設非醫療需求
                 "created_at": int(time.time()),
                 "updated_at": updated_at,
-                "role_name": role_name,
-                "role_type": role_type,
-                "skills": self._get_required_skills(mud_level, furniture_removed),
+                "role_name": "鏟子超人",
+                "role_type": "一般志工",
+                "skills": [],
                 "certifications": [],
-                "experience_level": self._get_experience_level(mud_level),
-                "language_requirements": ["中文"],
+                "experience_level": None,
+                "language_requirements": [],
                 "headcount_need": headcount_need,
-                "headcount_got": headcount_got,
+                "headcount_got": 0,
                 "headcount_unit": "人",
-                "role_status": role_status,
-                # 統計欄位，實際使用時可能需要從其他來源計算
-                "total_roles_in_request": 1,
-                "completed_roles_in_request": 1 if is_completed else 0,
-                "pending_roles_in_request": 0 if is_completed else 1,
-                "total_requests": 0,  # 需要實際統計
-                "active_requests": 0,  # 需要實際統計
-                "completed_requests": 0,  # 需要實際統計
-                "cancelled_requests": 0,  # 需要實際統計
-                "total_roles": 0,  # 需要實際統計
-                "completed_roles": 0,  # 需要實際統計
-                "pending_roles": 0,  # 需要實際統計
-                "urgent_requests": 1 if is_urgent else 0,
-                "medical_requests": 0
+                "role_status": "pending",
+                "shift_start_ts": None,
+                "shift_end_ts": None,
+                "shift_notes": None,
+                "assignment_timestamp": None,
+                "assignment_count": None,
+                "assignment_notes": f"最後更新時間：{last_update_date} {last_update_time}\n淤泥現況：{mud_level}\n廢棄物已移除：{furniture_removed}\n進入清潔階段：{cleaning_stage}",
+                "total_roles_in_request": None,
+                "completed_roles_in_request": None,
+                "pending_roles_in_request": None,
+                "total_requests": None,
+                "active_requests": None,
+                "completed_requests": None,
+                "cancelled_requests": None,
+                "total_roles": None,
+                "completed_roles": None,
+                "pending_roles": None,
+                "urgent_requests": None,
+                "medical_requests": None
             }
 
             return human_resource_record
@@ -149,62 +139,17 @@ class CSVToHumanResourcesConverter:
     def _calculate_headcount_by_mud_level(self, mud_level: str) -> int:
         """根據淤積程度計算所需人力數量"""
         if "50以上" in mud_level:
-            return 8  # 嚴重淤積需要較多人力
+            return 10  # 嚴重淤積需要較多人力
         elif "30～50" in mud_level:
-            return 6
+            return 8
         elif "10～30" in mud_level:
-            return 4
+            return 6
         elif "0～10" in mud_level:
-            return 2
+            return 4
         elif mud_level == "0":
-            return 1  # 輕微清潔
+            return 2  # 輕微清潔
         else:
             return 2  # 預設值
-
-    def _determine_role_type(self, mud_level: str, furniture_removed: str, cleaning_stage: str) -> str:
-        """根據災情判斷人力類型"""
-        if "50以上" in mud_level or "30～50" in mud_level:
-            return "一般志工"  # 需要大量清理工作
-        elif furniture_removed == "否":
-            return "一般志工"  # 需要搬運大型家具
-        elif cleaning_stage == "否":
-            return "一般志工"  # 需要清潔工作
-        else:
-            return "一般志工"  # 預設為一般志工
-
-    def _determine_role_name(self, mud_level: str, furniture_removed: str, cleaning_stage: str) -> str:
-        """根據災情判斷具體角色名稱"""
-        if "50以上" in mud_level or "30～50" in mud_level:
-            return "重度清理志工"
-        elif furniture_removed == "否":
-            return "搬運志工"
-        elif cleaning_stage == "否":
-            return "清潔志工"
-        else:
-            return "一般協助志工"
-
-    def _get_required_skills(self, mud_level: str, furniture_removed: str) -> List[str]:
-        """根據工作內容決定所需技能"""
-        skills = []
-
-        if furniture_removed == "否":
-            skills.extend(["搬運", "體力勞動"])
-
-        if "50以上" in mud_level or "30～50" in mud_level:
-            skills.extend(["清理", "泥沙清除", "體力勞動"])
-        elif "10～30" in mud_level or "0～10" in mud_level:
-            skills.extend(["清潔", "整理"])
-
-        return skills if skills else ["一般協助"]
-
-    def _get_experience_level(self, mud_level: str) -> str:
-        """根據工作難度決定經驗需求"""
-        if "50以上" in mud_level:
-            return "level_2"  # 需要有經驗
-        elif "30～50" in mud_level or "10～30" in mud_level:
-            return "level_1"  # 基礎經驗即可
-        else:
-            return "level_1"  # 預設基礎經驗
 
     def _parse_datetime(self, date_str: str, time_str: str) -> int:
         """解析日期時間字串，返回Unix timestamp"""
@@ -263,7 +208,7 @@ class CSVToHumanResourcesConverter:
     def post_record(self, record: Dict[str, Any]) -> bool:
         """發送單筆記錄到API"""
         try:
-            url = f"{self.api_base_url}/resources/human_resources"
+            url = f"{self.api_base_url}"
             headers = {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
@@ -273,26 +218,24 @@ class CSVToHumanResourcesConverter:
 
             if response.status_code == 201:
                 self.success_count += 1
-                print(f"✓ 成功插入記錄 ID: {record['id']}")
+                print(f"✓ 成功插入記錄 address: {record['address']}")
                 return True
             else:
                 self.error_count += 1
                 error_msg = f"API回應錯誤 {response.status_code}: {response.text}"
                 self.errors.append({
-                    'record_id': record['id'],
                     'error': error_msg
                 })
-                print(f"✗ 插入失敗 ID: {record['id']}, 錯誤: {error_msg}")
+                print(f"✗ 插入失敗 address: {record['address']}, 錯誤: {error_msg}")
                 return False
 
         except requests.RequestException as e:
             self.error_count += 1
             error_msg = f"網路請求錯誤: {e}"
             self.errors.append({
-                'record_id': record['id'],
                 'error': error_msg
             })
-            print(f"✗ 插入失敗 ID: {record['id']}, 錯誤: {error_msg}")
+            print(f"✗ 插入失敗 address: {record['address']}, 錯誤: {error_msg}")
             return False
 
     def process_records(self, records: List[Dict[str, Any]]) -> None:
@@ -323,7 +266,7 @@ class CSVToHumanResourcesConverter:
         if self.errors:
             print(f"\n錯誤詳情:")
             for error in self.errors[:10]:  # 只顯示前10個錯誤
-                print(f"  - ID: {error['record_id']}, 錯誤: {error['error']}")
+                print(f"  - 錯誤: {error['error']}")
 
             if len(self.errors) > 10:
                 print(f"  ... 還有 {len(self.errors) - 10} 個錯誤")
@@ -355,7 +298,7 @@ def main():
             print(json.dumps(records[0], indent=2, ensure_ascii=False))
     else:
         # 確認是否繼續
-        print(f"\n準備將 {len(records)} 筆記錄插入到 {args.api_url}/resources/human_resources")
+        print(f"\n準備將 {len(records)} 筆記錄插入到 {args.api_url}")
         confirm = input("確定要繼續嗎？(y/N): ")
 
         if confirm.lower() == 'y':
