@@ -138,7 +138,13 @@
 
 ### `map_spatial_info`
 
-下面是 Zack 設計給所有地圖空間資訊於資料庫所需的通用欄位，Pichu 可以根據以下表格開設 SQL 欄位。在每個 `type` 後也有提供範例 JSON 供參閱，表格為原先 YJ 設計的欄位。
+下面是 Zack 設計給所有地圖空間資訊於資料庫所需的通用欄位，Pichu 可以根據以下表格開設 SQL 欄位。
+
+以下為核心設計邏輯：
+
+1. 通用基礎層（Shared Core）： 盡可能列出所有地圖物件共同的核心欄位（如 id, name, address, lat/lng, status, contact 等），以確保資料的通用性和一致性。
+2. 分類區隔層（Layering）： 使用 type_key (搭配 subtype_key) 作為主要的圖層分類依據，將異質性的物件進行高效率的區隔和篩選。
+3. 彈性擴充層（Flexibility）： 依賴 properties (JSONB) 欄位作為彈性的擴充區域，專門處理每個 type_key 所特有的、非標準化的屬性，從而避免主表欄位爆炸。
 
 如有任何可以改進的地方歡迎提出～
 
