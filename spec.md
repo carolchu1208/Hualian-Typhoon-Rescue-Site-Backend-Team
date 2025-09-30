@@ -361,7 +361,7 @@
 | urgent_requests | number | 否 | 系統緊急人力需求數 | 12 |
 | medical_requests | number | 否 | 系統醫療人力需求數 | 25 |
 
-# suppiles
+## suppiles
 
 | 欄位名稱 | 資料類型 | 必填 | 說明 | 範例 |
 | --- | --- | --- | --- | --- |
@@ -373,7 +373,7 @@
 | created_at | number | 是 | 建立時間（Unix timestamp） | 1727664000 |
 | updated_at | number | 是 | 更新時間（Unix timestamp） | 1727750400 |
 
-# suppily_items 
+## suppily_items 
 
 | 欄位名稱 | 資料類型 | 必填 | 說明 | 範例 |
 | --- | --- | --- | --- | --- |
