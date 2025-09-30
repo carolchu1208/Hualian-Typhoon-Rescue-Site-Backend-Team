@@ -243,7 +243,7 @@
 | medical_requests | number | 否 | 系統醫療人力需求數 | 25 |
 
 
-### suppiles
+### supplies
 
 | 欄位名稱 | 資料類型 | 必填 | 說明 | 範例 |
 | --- | --- | --- | --- | --- |
@@ -255,12 +255,13 @@
 | created_at | number | 是 | 建立時間（Unix timestamp） | 1727664000 |
 | updated_at | number | 是 | 更新時間（Unix timestamp） | 1727750400 |
 
-### suppily_items 
+
+### supply_items 
 
 | 欄位名稱 | 資料類型 | 必填 | 說明 | 範例 |
 | --- | --- | --- | --- | --- |
 | id | string | 是 | 需求唯一識別碼 | 31f95ee9-e920-4f44-95a2-d40ded631893 |
-| suppily_id | string | 是 | 對應的物資單ID | 26f95ee9-e920-4f44-95a2-d40ded631893 |
+| supply_id | string | 是 | 對應的物資單ID | 26f95ee9-e920-4f44-95a2-d40ded631893 |
 | tag | string | 否 | 物資總類 | 飲食 |
 | name | string | 否 | 物資名稱 | OOOO |
 | received_count | number | 否 | 已取得的物資數量 | 1 |
