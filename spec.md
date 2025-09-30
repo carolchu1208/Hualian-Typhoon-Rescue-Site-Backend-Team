@@ -332,7 +332,6 @@
 | has_medical | boolean | 否 | 是否屬於醫療人力需求 | true, false |
 | created_at | number | 是 | 建立時間 (Unix Timestamp) | 1759164503 |
 | updated_at | number | 是 | 更新時間 (Unix Timestamp) | 1759164503 |
-| role_id | string | 是 | 人力角色ID | role-uuid-1 |
 | role_name | string | 是 | 人力角色名稱 | 搬運志工 |
 | role_type | string | 是 | 人力類型 | 一般志工, 醫療人員, 行政支援, 司機, 安全維護, 其他 |
 | skills | array[string] | 否 | 所需技能或資格 | [“搬運”,“CPR”,“急救證照”] |
@@ -343,11 +342,9 @@
 | headcount_got | number | 是 | 已到位人數 | 18 |
 | headcount_unit | string | 否 | 人數單位 | 人 |
 | role_status | string | 是 | 人力填補狀態 | completed, pending, partial |
-| shift_id | string | 否 | 班次ID | shift-uuid |
 | shift_start_ts | number | 否 | 班次開始時間 (Unix Timestamp) | 1759164503 |
 | shift_end_ts | number | 否 | 班次結束時間 (Unix Timestamp) | 1759168103 |
 | shift_notes | string | 否 | 班次備註 | 需自備手套與安全鞋 |
-| assignment_id | string | 否 | 派工/報到記錄ID | assign-uuid |
 | assignment_timestamp | number | 否 | 派工/報到時間 | 1759164503 |
 | assignment_count | number | 否 | 本次派工人數 | 10 |
 | assignment_notes | string | 否 | 派工備註 | 到現場與組長報到 |
