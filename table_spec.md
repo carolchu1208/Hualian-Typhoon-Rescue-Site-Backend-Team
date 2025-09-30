@@ -1,79 +1,4 @@
-# 官網基本資訊
-
-## 資訊總覽
-
-| 資訊 | 內容 |
-|------|------|
-| Google Sheet 副本 | 光復救災平台用的副本 |
-| 官網連結 | https://sites.google.com/view/guangfu250923/%E7%81%BD%E6%B0%91%E5%8D%94%E5%8A%A9/slennh?authuser=0 |
-| 前端 UI Spec | https://www.figma.com/design/3HmmJtwok42obsXH93s21b/%E8%8A%B1%E8%93%AE%E5%85%89%E5%BE%A9%E5%BE%A9%E5%8E%9F%E4%B9%8B%E8%B7%AF%EF%BC%81?node-id=162-553&t=Fw2L65c6BsMguQRh-0 |
-| 前端技術 | Google Site |
-| 資料庫類型 | PostgreSQL |
-| 資料庫 endpoint | |
-| 資料庫帳號密碼 | |
-| 後端 API 框架 | Golang |
-
----
-
-## API Spec
-
-### 批量撈取資料
-
-**端點：** `GET /resources/{resource_type}`
-
-**Request Body：** N/A
-
-**Response Body：**
-```json
-{
-  "code": 200,
-  "data": [
-    {resource_entity_1},
-    {resource_entity_2},
-    ...
-  ]
-}
-```
-
-### 寫入單一資料
-
-**端點：** `POST /resources/{resource_type}`
-
-**Request Body：**
-```json
-{
-  <same_schema_as_table_schema>
-}
-```
-
-**Response Body：**
-```json
-{
-  "code": 201
-}
-```
-
-### 更新資料 (updates)
-
-**端點：** `POST /resources/{resource_type}/{id}`
-
-**Request Body：**
-```json
-{
-  <same_schema_as_table_schema>
-}
-```
-
-**Response Body：**
-```json
-{
-  "code": 200
-}
-```
-
----
-
-## Table Schema
+## Tables
 
 ### volunteer_organizations
 
@@ -92,46 +17,6 @@
 | notes | string | | 備註事項 | |
 | image_url | string \| null | | 圖檔資訊 URL（如果有的話） | |
 
----
-
-### supplies (deprecated)
-
-| 欄位名稱 | 資料類型 | 必填 | 說明 | 範例 |
-|---------|---------|------|------|------|
-| id | string | 是 | 需求唯一識別碼 | 26f95ee9-e920-4f44-95a2-d40ded631893 |
-| org | string | 是 | 單位名稱 | 吉安鄉志工服務隊 |
-| address | string | 是 | 地址 | 花蓮縣吉安鄉中山路三段100號 |
-| phone | string | 是 | 電話號碼 | 038-123456 |
-| status | string | 是 | 需求狀態 | active, completed, cancelled |
-| is_completed | boolean | 是 | 是否已完成 | true, false |
-| has_medical | boolean | 是 | 是否包含醫療用品 | true, false |
-| created_at | number | 是 | 建立時間 | 1759164503 |
-| updated_at | number | 是 | 更新時間 | 1759164503 |
-| item_id | string | 是 | 物資項目ID | item-uuid-1 |
-| item_name | string | 是 | 物資名稱 | 瓶裝水 |
-| item_type | string | 是 | 物資類型 | 食物/水, 醫療用品, 生活用品, 大型機具, 其他 |
-| item_need | number | 是 | 需求數量 | 30 |
-| item_got | number | 是 | 已收到數量 | 18 |
-| item_unit | string | 是 | 單位 | 箱, 包, 片, 台, 張, 卷, 套, 瓶, 項 |
-| item_status | string | 是 | 物資狀態 | completed, pending, partial |
-| delivery_id | string | 否 | 配送記錄ID | delivery-uuid |
-| delivery_timestamp | number | 否 | 配送時間 | 1759164503 |
-| delivery_quantity | number | 否 | 配送數量 | 10 |
-| delivery_notes | string | 否 | 配送備註 | 已送達請簽收 |
-| total_items_in_request | number | 否 | 此需求總物資項目數 | 3 |
-| completed_items_in_request | number | 否 | 此需求已完成物資數 | 2 |
-| pending_items_in_request | number | 否 | 此需求待完成物資數 | 1 |
-| total_requests | number | 否 | 系統總需求數 | 150 |
-| active_requests | number | 否 | 系統進行中需求數 | 45 |
-| completed_requests | number | 否 | 系統已完成需求數 | 100 |
-| cancelled_requests | number | 否 | 系統已取消需求數 | 5 |
-| total_items | number | 否 | 系統總物資項目數 | 500 |
-| completed_items | number | 否 | 系統已完成物資數 | 300 |
-| pending_items | number | 否 | 系統待完成物資數 | 200 |
-| urgent_requests | number | 否 | 系統緊急需求數 | 12 |
-| medical_requests | number | 否 | 系統醫療需求數 | 25 |
-
----
 
 ### shelters
 
@@ -156,7 +41,6 @@
 | created_at | number | 是 | 建立時間（Unix timestamp） | 1727664000 |
 | updated_at | number | 是 | 更新時間（Unix timestamp） | 1727750400 |
 
----
 
 ### medical_stations
 
@@ -182,7 +66,6 @@
 | created_at | number | 是 | 建立時間（Unix timestamp） | 1727664000 |
 | updated_at | number | 是 | 更新時間（Unix timestamp） | 1727750400 |
 
----
 
 ### mental_health_resources
 
@@ -209,7 +92,6 @@
 | created_at | number | 是 | 建立時間（Unix timestamp） | 1727664000 |
 | updated_at | number | 是 | 更新時間（Unix timestamp） | 1727750400 |
 
----
 
 ### accommodations
 
@@ -236,7 +118,6 @@
 | created_at | number | 是 | 建立時間（Unix timestamp） | 1727664000 |
 | updated_at | number | 是 | 更新時間（Unix timestamp） | 1727750400 |
 
----
 
 ### shower_stations
 
@@ -264,7 +145,6 @@
 | created_at | number | 是 | 建立時間（Unix timestamp） | 1727664000 |
 | updated_at | number | 是 | 更新時間（Unix timestamp） | 1727750400 |
 
----
 
 ### water_refill_stations
 
@@ -290,7 +170,6 @@
 | created_at | number | 是 | 建立時間（Unix timestamp） | 1727664000 |
 | updated_at | number | 是 | 更新時間（Unix timestamp） | 1727750400 |
 
----
 
 ### restrooms
 
@@ -320,7 +199,9 @@
 | created_at | number | 是 | 建立時間（Unix timestamp） | 1727664000 |
 | updated_at | number | 是 | 更新時間（Unix timestamp） | 1727750400 |
 
-## human_resources
+
+### human_resources
+
 | 欄位名稱 | 資料類型 | 必填 | 說明 | 範例 |
 | --- | --- | --- | --- | --- |
 | id | string | 是 | 需求唯一識別碼 | hr-26f95ee9-e920-4f44-95a2-d40ded631893 |
@@ -361,7 +242,8 @@
 | urgent_requests | number | 否 | 系統緊急人力需求數 | 12 |
 | medical_requests | number | 否 | 系統醫療人力需求數 | 25 |
 
-## suppiles
+
+### suppiles
 
 | 欄位名稱 | 資料類型 | 必填 | 說明 | 範例 |
 | --- | --- | --- | --- | --- |
@@ -373,7 +255,7 @@
 | created_at | number | 是 | 建立時間（Unix timestamp） | 1727664000 |
 | updated_at | number | 是 | 更新時間（Unix timestamp） | 1727750400 |
 
-## suppily_items 
+### suppily_items 
 
 | 欄位名稱 | 資料類型 | 必填 | 說明 | 範例 |
 | --- | --- | --- | --- | --- |
@@ -384,3 +266,19 @@
 | received_count | number | 否 | 已取得的物資數量 | 1 |
 | total_number | number | 是 | 總共所需的物資數量 | 3 |
 | unit | string | 否 | 物資的單位 | 箱 |
+
+
+## Table & UI Mapping
+
+| 資料表 (Table) | 對應頁面 (UI Page) |
+|---|---|
+| supplies | 蜜蜂配給 |
+| human_resources | 人力資源 |
+| restrooms | 生活資源 > 廁所 |
+| water_refill_stations | 生活資源 > 供水 |
+| shower_stations | 生活資源 > 洗澡 |
+| accommodations | 地點總覽 > 住宿？ |
+| mental_health_resources | 災民援助 > 心理援助 |
+| medical_stations | 生活資源 > 醫療站<br>災民協助 > 醫療站 |
+| shelters | 災民協助 > 庇護所 |
+| volunteer_organizations | ？ |
