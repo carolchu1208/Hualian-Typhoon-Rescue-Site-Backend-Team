@@ -44,14 +44,14 @@
 
 ## API/Table 格式
 
-### organizations (救災團體)
+### org (救災團體)
 
 - 撈取所有救災團體
-  - GET /organizations
+  - GET /org
 - 寫入一筆救災團體
-  - POST /organizations
+  - POST /org
 - 更新一筆救災團體
-  - PUT /organizations/{id}
+  - PUT /org/{id}
 
 | 欄位           | 類型          | 必填 | 說明/註解                                           |
 |---------------|--------------|-----|--------------------------------------------------|
@@ -132,7 +132,7 @@
 | id            | UUID          | 是  | 主鍵；UUID                                    |
 | created_at    | DateTime      | 是  | UTC；建立時間                                  |
 | updated_at    | DateTime      | 是  | UTC；更新時間                                  |
-| type          | string(10)    | 是  | 地點類型；choices: stay/shelter/med/shower/toilet |
+| type          | string(10)    | 是  | 地點類型；choices: stay/shelter/med/shower/toilet/water |
 | name          | string(255)   | 是  | 地點名稱                                       |
 | status        | string(10)    | 是  | 狀態；choices: open/pause/close               |
 | address       | string(255)   | 是  | 地址                                         |
