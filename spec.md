@@ -165,7 +165,7 @@
 | id | string | 是 | 醫療站唯一識別碼 | station-uuid-001 |
 | station_type | string | 是 | 醫療站類型 | self_organized, fixed_point, shelter_medical |
 | name | string | 是 | 醫療站名稱 | 慈濟第三醫療站 |
-| location | string | 是 | 地點/地址 | 全聯對面加油站帳篷下 |
+| location | string | 否 | 地點/地址 | 全聯對面加油站帳篷下 |
 | detailed_address | string | 否 | 詳細地址 | 花蓮縣光復鄉東富路30-2號 |
 | phone | string | 否 | 聯絡電話 | 03-8701234 |
 | contact_person | string | 否 | 負責人/聯絡人 | 李醫師 |
