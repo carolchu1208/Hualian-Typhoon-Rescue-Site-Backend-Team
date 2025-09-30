@@ -13,9 +13,7 @@
 | 資料庫帳號密碼 | |
 | 後端 API 框架 | Golang |
 
----
-
-## API Spec
+## API 格式
 
 ### 批量撈取資料
 
@@ -53,7 +51,7 @@
 }
 ```
 
-### 更新資料 (updates)
+### 更新單一資料
 
 **端點：** `POST /resources/{resource_type}/{id}`
 
@@ -71,249 +69,109 @@
 }
 ```
 
----
 
-## Table Schema
+## 資料表格式
 
-### volunteer_organizations
+### org (救災團體)
+|欄位       |類型         |必填|說明/註解                                        |
+|---------|-----------|--|---------------------------------------------|
+|id       |UUID       |是 |                       |
+|created_at |DateTime   |是 |UTC；建立時間                            |
+|updated_at |DateTime   |是 |UTC；更新時間                            |
+|name     |string(255)|是 |團體名稱                                         |
+|status   |string(10) |是 |招募狀態；choices: over(持續超收)/stop(停止招收)          |
+|type |string(20) |是 |組織性質；choices: dist_large/team_small/pro_special|
+|contact_name |string(255)|是 |統籌窗口姓名                                       |
+|contact_phone|string(50) |是 |聯絡電話                              |
+|contact_email|email      |否 |聯絡 Email；格式驗證                                |
+|contact_url |url        |否 |官方網址/聯絡頁面                                    |
+|contact_other|string(255)|否 |其他聯絡方式（LINE/FB 等）                            | |
+|services |text       |是 |服務內容                                    |
+|meeting  |text       |是 |集合/交通資訊                                |
+|note     |text       |否 |備註（非必填）                                      |
 
-| 欄位 | 類型 | 必填 | 說明 | 範例 |
-|------|------|------|------|------|
-| id | string | 是 | 團體唯一識別碼 | |
-| last_updated | datetime (ISO 8601) | | 最新更新時間 | |
-| registration_status | string | | 接受報名情形（例：「接受中」、「額滿」、「已結束」） | |
-| organization_nature | string | | 單位性質（例：「NGO」、「政府單位」、「民間團體」） | |
-| organization_name | string | | 單位名稱 | |
-| coordinator | string | | 統籌窗口 | |
-| contact_info | string | | 聯絡方式（電話、email 等） | |
-| registration_method | string | | 報名方式 | |
-| service_content | string | | 志工服務內容 | |
-| meeting_info | string | | 報到集合時間地點、交通事宜 | |
-| notes | string | | 備註事項 | |
-| image_url | string \| null | | 圖檔資訊 URL（如果有的話） | |
+### supplies (物資)
+|欄位        |類型         |必填|說明/註解                                                          |
+|----------|-----------|--|---------------------------------------------------------------|
+|id        |UUID       |是 |主鍵；UUID                                                        |
+|created_at|DateTime   |是 |UTC；建立時間                                                       |
+|updated_at|DateTime   |是 |UTC；更新時間                                                       |
+|status    |string(10) |是 |需求狀態；choices: active/done/cancel                               | |
+|has_med   |boolean    |是 |是否包含醫療用品；true/false                                            |
+|org_id    |UUID(FK)   |否 |關聯組織；外鍵至 orgs，SET_NULL                                         |
+|place_id  |UUID(FK)   |否 |關聯地點；外鍵至 places，SET_NULL                                       |
+|address   |string(255)|否 |寄送地址（若非指向 Place，可填）                                            |
+|phone     |string(50) |否 |聯絡電話                                                           |
+|items     |JSON       |是 |物資清單；如 [{“name”:“瓶裝水”,“type”:“食物/水”,“need”:30,“got”:18,“unit”:“箱”}]|
 
----
+### counseling (心理諮商資源)
+| 欄位            |類型         |必填|說明/註解                         |
+|---------------|-----------|--|------------------------------|
+| id            |UUID       |是 |主鍵；UUID                       |
+| created_at    |DateTime   |是 |UTC；建立時間                      |
+| updated_at    |DateTime   |是 |UTC；更新時間                      |
+| name          |string(255)|是 |服務名稱                          |
+| duration      |string(10) |是 |服務期間；choices: temp(臨時)/long(長期) |
+| form          |string(10) |是 |服務形式；choices: site/call/online/multi|
+| org_id        |UUID(FK)   |否 |所屬組織；外鍵至 orgs，SET_NULL        |
+| opening_hours |string(255)|是 |服務時間              |
+| address       |string(255)|是 |服務地點                          |
+| contact_name  |string(255)|是 |聯絡人姓名                         |
+| contact_phone |string(50) |是 |聯絡電話                          |
+| contact_email |email      |否 |聯絡 Email                      |
+| contact_url   |url        |否 |官方網址                          |
+| note          |text       |否 |備註                            |
 
-### supplies
+### places (地點)
+| 欄位            |類型          |必填|說明/註解                                  |
+|---------------|------------|--|---------------------------------------|
+| id            |UUID        |是 |主鍵；UUID                                |
+| created_at    |DateTime    |是 |UTC；建立時間                               |
+| updated_at    |DateTime    |是 |UTC；更新時間                               |
+| type          |string(10)  |是 |地點類型；choices: stay/shelter/med/shower/toilet|
+| name          |string(255) |是 |地點名稱                                   |
+| status        |string(10)  |是 |狀態；choices: open/pause/close           |
+| address       |string(255) |是 |地址                                     |
+| org_id        |UUID(FK)    |否 |所屬組織；外鍵至 orgs，SET_NULL                 |
+| open_date     |date        |否 |開始服務日期                                 |
+| close_date    |date        |否 |結束服務日期                                 |
+| opening_hours |string(255) |否 |營運時間（自由文字，例如「每天 09:00-21:00」）          |
+| contact_name  |string(255) |是 |聯絡人姓名                                  |
+| contact_phone |string(50)  |是 |聯絡電話                                   |
+| contact_email |email       |否 |聯絡 Email                               |
+| lat           |decimal(9,6)|是 |緯度                         |
+| lng           |decimal(9,6)|是 |經度                           |
+| extra         |JSON        |否 |彈性欄位                         |
+| source        |string(255) |否 |資料來源（例如「社群貼文」或 API 名稱）                 |
 
-| 欄位名稱 | 資料類型 | 必填 | 說明 | 範例 |
-|---------|---------|------|------|------|
-| id | string | 是 | 需求唯一識別碼 | 26f95ee9-e920-4f44-95a2-d40ded631893 |
-| org | string | 是 | 單位名稱 | 吉安鄉志工服務隊 |
-| address | string | 是 | 地址 | 花蓮縣吉安鄉中山路三段100號 |
-| phone | string | 是 | 電話號碼 | 038-123456 |
-| status | string | 是 | 需求狀態 | active, completed, cancelled |
-| is_completed | boolean | 是 | 是否已完成 | true, false |
-| has_medical | boolean | 是 | 是否包含醫療用品 | true, false |
-| created_at | number | 是 | 建立時間 | 1759164503 |
-| updated_at | number | 是 | 更新時間 | 1759164503 |
-| item_id | string | 是 | 物資項目ID | item-uuid-1 |
-| item_name | string | 是 | 物資名稱 | 瓶裝水 |
-| item_type | string | 是 | 物資類型 | 食物/水, 醫療用品, 生活用品, 大型機具, 其他 |
-| item_need | number | 是 | 需求數量 | 30 |
-| item_got | number | 是 | 已收到數量 | 18 |
-| item_unit | string | 是 | 單位 | 箱, 包, 片, 台, 張, 卷, 套, 瓶, 項 |
-| item_status | string | 是 | 物資狀態 | completed, pending, partial |
-| delivery_id | string | 否 | 配送記錄ID | delivery-uuid |
-| delivery_timestamp | number | 否 | 配送時間 | 1759164503 |
-| delivery_quantity | number | 否 | 配送數量 | 10 |
-| delivery_notes | string | 否 | 配送備註 | 已送達請簽收 |
-| total_items_in_request | number | 否 | 此需求總物資項目數 | 3 |
-| completed_items_in_request | number | 否 | 此需求已完成物資數 | 2 |
-| pending_items_in_request | number | 否 | 此需求待完成物資數 | 1 |
-| total_requests | number | 否 | 系統總需求數 | 150 |
-| active_requests | number | 否 | 系統進行中需求數 | 45 |
-| completed_requests | number | 否 | 系統已完成需求數 | 100 |
-| cancelled_requests | number | 否 | 系統已取消需求數 | 5 |
-| total_items | number | 否 | 系統總物資項目數 | 500 |
-| completed_items | number | 否 | 系統已完成物資數 | 300 |
-| pending_items | number | 否 | 系統待完成物資數 | 200 |
-| urgent_requests | number | 否 | 系統緊急需求數 | 12 |
-| medical_requests | number | 否 | 系統醫療需求數 | 25 |
+#### 庇護所 additional_info
 
----
+```json
+{}
+```
 
-### shelters
+#### 醫療站 additional_info
 
-| 欄位名稱 | 資料類型 | 必填 | 說明 | 範例 |
-|---------|---------|------|------|------|
-| id | string | 是 | 庇護所唯一識別碼 | shelter-uuid-001 |
-| name | string | 是 | 庇護所/安置點名稱 | 光復國小臨時安置中心 |
-| location | string | 是 | 地點/地址 | 花蓮縣光復鄉中正路一段1號 |
-| phone | string | 是 | 連絡電話 | 03-8701129 |
-| link | string | 否 | 相關連結（官網、地圖等） | https://maps.google.com/... |
-| status | string | 是 | 營運狀態 | open, full, closed, temporary_closed |
-| capacity | number | 否 | 容納人數上限 | 150 |
-| current_occupancy | number | 否 | 目前收容人數 | 87 |
-| available_spaces | number | 否 | 剩餘空位 | 63 |
-| facilities | array | 否 | 提供設施 | ["盥洗設備", "用餐區", "醫療站"] |
-| contact_person | string | 否 | 聯絡人姓名 | 王小明主任 |
-| notes | string | 否 | 備註說明 | 僅限災民，需攜帶身分證件 |
-| coordinates | object | 否 | GPS 座標 | {"lat": 23.6639, "lng": 121.4208} |
-| opening_hours | string | 否 | 開放時間 | 24小時開放 |
-| created_at | number | 是 | 建立時間（Unix timestamp） | 1727664000 |
-| updated_at | number | 是 | 更新時間（Unix timestamp） | 1727750400 |
+```json
+{}
+```
 
----
+#### 住宿點 additional_info
 
-### medical_stations
+```json
+{
+  "room_info": "四人雅房４間、六人雅房1間、八人雅房1間"
+}
+```
 
-| 欄位名稱 | 資料類型 | 必填 | 說明 | 範例 |
-|---------|---------|------|------|------|
-| id | string | 是 | 醫療站唯一識別碼 | station-uuid-001 |
-| station_type | string | 是 | 醫療站類型 | self_organized, fixed_point, shelter_medical |
-| name | string | 是 | 醫療站名稱 | 慈濟第三醫療站 |
-| location | string | 是 | 地點/地址 | 全聯對面加油站帳篷下 |
-| detailed_address | string | 否 | 詳細地址 | 花蓮縣光復鄉東富路30-2號 |
-| phone | string | 否 | 聯絡電話 | 03-8701234 |
-| contact_person | string | 否 | 負責人/聯絡人 | 李醫師 |
-| status | string | 是 | 營運狀態 | active, temporarily_closed, closed |
-| services | array | 否 | 提供服務項目 | ["急診處理", "傷口處理", "慢性病用藥"] |
-| operating_hours | string | 否 | 營運時間 | 08:00-20:00 |
-| equipment | array | 否 | 醫療設備 | ["血壓計", "體溫計", "急救箱"] |
-| medical_staff | number | 否 | 醫護人員數 | 3 |
-| daily_capacity | number | 否 | 每日服務量 | 50 |
-| coordinates | object | 否 | GPS 座標 | {"lat": 23.6639, "lng": 121.4208} |
-| affiliated_organization | string | 否 | 所屬組織 | 慈濟基金會 |
-| notes | string | 否 | 備註說明 | 提供免費醫療諮詢 |
-| link | string | 否 | 相關連結 | https://maps.google.com/... |
-| created_at | number | 是 | 建立時間（Unix timestamp） | 1727664000 |
-| updated_at | number | 是 | 更新時間（Unix timestamp） | 1727750400 |
+#### 洗澡點 additional_info
 
----
+```json
+{}
+```
 
-### mental_health_resources
+#### 如廁點 additional_info
 
-| 欄位名稱 | 資料類型 | 必填 | 說明 | 範例 |
-|---------|---------|------|------|------|
-| id | string | 是 | 資源唯一識別碼 | mh-uuid-001 |
-| duration_type | string | 是 | 服務期間類型 | temporary, long_term, both |
-| name | string | 是 | 服務單位或計畫名稱 | 光復災後心理支持團隊 |
-| service_format | string | 是 | 服務形式 | onsite, phone, online, hybrid |
-| service_hours | string | 是 | 服務時間 | 週一至週五 09:00-17:00 |
-| contact_info | string | 是 | 聯繫方式 | 0800-123-456 / support@example.org |
-| website_url | string | 否 | 網址 | https://example.org |
-| target_audience | array | 否 | 服務對象 | ["災民", "志工", "救災人員"] |
-| specialties | array | 否 | 專業領域 | ["創傷輔導", "壓力管理", "哀傷輔導"] |
-| languages | array | 否 | 提供語言服務 | ["中文", "台語", "英文"] |
-| is_free | boolean | 是 | 是否免費 | true, false |
-| location | string | 否 | 服務地點 | 光復鄉公所二樓會議室 |
-| coordinates | object | 否 | GPS 座標 | {"lat": 23.6639, "lng": 121.4208} |
-| status | string | 是 | 服務狀態 | active, paused, ended |
-| capacity | number | 否 | 每日服務量 | 20 |
-| waiting_time | string | 否 | 等候時間 | 即時服務, 需預約, 3-5天 |
-| notes | string | 否 | 備註 | 提供個別諮商及團體輔導 |
-| emergency_support | boolean | 是 | 是否提供緊急支援 | true, false |
-| created_at | number | 是 | 建立時間（Unix timestamp） | 1727664000 |
-| updated_at | number | 是 | 更新時間（Unix timestamp） | 1727750400 |
-
----
-
-### accommodations
-
-| 欄位名稱 | 資料類型 | 必填 | 說明 | 範例 |
-|---------|---------|------|------|------|
-| id | string | 是 | 住宿唯一識別碼 | acc-uuid-001 |
-| township | string | 是 | 鄉鎮 | 吉安鄉, 花蓮市, 玉里鎮, 光復鄉 |
-| name | string | 是 | 民宿/住宿點名稱 | 山緹民宿 |
-| has_vacancy | string | 是 | 尚有空房狀態 | available, full, unknown, need_confirm |
-| available_period | string | 是 | 開放期間 | 9/27-10/3, 9/24起 |
-| restrictions | string | 否 | 入住限制 | 限救災志工, 每人限住兩晚, 需出示志工證 |
-| contact_info | string | 是 | 聯繫方式 | 0932-520-949, Line: @treetree, FB私訊 |
-| room_info | string | 否 | 時間、房型資訊 | 雙人房 2 間、四人房 1 間 |
-| address | string | 是 | 地址 | 花蓮縣吉安鄉民治路242號 |
-| coordinates | object | 否 | GPS 經緯度 | {"lat": 23.9608, "lng": 121.5798} |
-| pricing | string | 是 | 費用 | 免費, 優惠價500元/晚, 待確認 |
-| info_source | string | 否 | 資訊來源 | 花蓮國際民宿協會, threads, 經濟部FB |
-| notes | string | 否 | 其他備註 | 通往光復的台鐵單程車程約30-50分鐘 |
-| capacity | number | 否 | 總可容納人數 | 12 |
-| status | string | 是 | 營運狀態 | active, paused, ended |
-| registration_method | string | 否 | 報到方式 | 現場登記, 線上預約, 電話預約 |
-| facilities | array | 否 | 提供設施 | ["盥洗", "Wi-Fi", "停車位", "早餐"] |
-| distance_to_disaster_area | string | 否 | 至災區距離/車程 | 30-50分鐘車程, 15公里 |
-| created_at | number | 是 | 建立時間（Unix timestamp） | 1727664000 |
-| updated_at | number | 是 | 更新時間（Unix timestamp） | 1727750400 |
-
----
-
-### shower_stations
-
-| 欄位名稱 | 資料類型 | 必填 | 說明 | 範例 |
-|---------|---------|------|------|------|
-| id | string | 是 | 洗澡點唯一識別碼 | shower-uuid-001 |
-| name | string | 是 | 名稱 | 光復國小 |
-| address | string | 是 | 地址 | 花蓮縣光復鄉中山路三段75號 |
-| coordinates | object | 否 | GPS 經緯度 | {"lat": 23.6639, "lng": 121.4208} |
-| phone | string | 否 | 聯絡電話 | 03-8702880 |
-| facility_type | string | 是 | 設施類型 | mobile_shower, coin_operated, regular_bathroom |
-| time_slots | string | 是 | 提供洗澡的時段 | 上午10:00-11:30, 下午15:30-17:30 |
-| gender_schedule | object | 否 | 性別使用時段 | {"male": ["10:00-10:30"], "female": ["10:30-11:30"]} |
-| available_period | string | 是 | 開放期間 | 9/26-9/28, 即日起至10/3 |
-| capacity | number | 否 | 同時可容納人數 | 5 |
-| is_free | boolean | 是 | 是否免費 | true, false |
-| pricing | string | 否 | 費用說明 | 投幣式，每次10元 |
-| notes | string | 否 | 備註 | 多座行動沐浴車, 僅開放廁所+浴室 |
-| info_source | string | 否 | 資料來源 | https://www.threads.com/... |
-| status | string | 是 | 營運狀態 | active, temporarily_closed, ended |
-| facilities | array | 否 | 額外設施 | ["吹風機", "毛巾", "盥洗用品"] |
-| distance_to_guangfu | string | 否 | 距光復車程 | 20分鐘, 40分鐘 |
-| requires_appointment | boolean | 是 | 是否需預約 | true, false |
-| contact_method | string | 否 | 預約方式 | LINE: @wowhostel, 電話預約 |
-| created_at | number | 是 | 建立時間（Unix timestamp） | 1727664000 |
-| updated_at | number | 是 | 更新時間（Unix timestamp） | 1727750400 |
-
----
-
-### water_refill_stations
-
-| 欄位名稱 | 資料類型 | 必填 | 說明 | 範例 |
-|---------|---------|------|------|------|
-| id | string | 是 | 裝水點唯一識別碼 | water-uuid-001 |
-| name | string | 是 | 地點名稱 | 光復國小裝水站 |
-| address | string | 是 | 地址 | 花蓮縣光復鄉中山路三段75號 |
-| coordinates | object | 否 | GPS 經緯度 | {"lat": 23.6639, "lng": 121.4208} |
-| phone | string | 否 | 聯絡電話 | 03-8701129 |
-| water_type | string | 是 | 水源類型 | drinking_water, bottled_water, filtered_water |
-| opening_hours | string | 是 | 開放時間 | 24小時, 08:00-20:00 |
-| is_free | boolean | 是 | 是否免費 | true, false |
-| container_required | string | 否 | 容器要求 | 自備容器, 現場提供瓶裝水 |
-| daily_capacity | number | 否 | 每日供水量（公升） | 500 |
-| status | string | 是 | 營運狀態 | active, temporarily_unavailable, ended |
-| water_quality | string | 否 | 水質狀態 | tested, safe, needs_boiling |
-| facilities | array | 否 | 額外設施 | ["飲水機", "水龍頭", "瓶裝水發放"] |
-| accessibility | boolean | 是 | 無障礙設施 | true, false |
-| distance_to_disaster_area | string | 否 | 距災區距離 | 在災區內, 5分鐘車程 |
-| notes | string | 否 | 備註 | 提供冷熱水, 請自備容器 |
-| info_source | string | 否 | 資料來源 | 鄉公所公告 |
-| created_at | number | 是 | 建立時間（Unix timestamp） | 1727664000 |
-| updated_at | number | 是 | 更新時間（Unix timestamp） | 1727750400 |
-
----
-
-### restrooms
-
-| 欄位名稱 | 資料類型 | 必填 | 說明 | 範例 |
-|---------|---------|------|------|------|
-| id | string | 是 | 廁所點唯一識別碼 | restroom-uuid-001 |
-| name | string | 是 | 地點名稱 | 光復國小臨時廁所 |
-| address | string | 是 | 地址 | 花蓮縣光復鄉中山路三段75號 |
-| coordinates | object | 否 | GPS 經緯度 | {"lat": 23.6639, "lng": 121.4208} |
-| phone | string | 否 | 聯絡電話 | 03-8701129 |
-| facility_type | string | 是 | 設施類型 | mobile_toilet, permanent_toilet, public_restroom |
-| opening_hours | string | 是 | 開放時間 | 24小時, 06:00-22:00 |
-| is_free | boolean | 是 | 是否免費 | true, false |
-| male_units | number | 否 | 男廁數量 | 3 |
-| female_units | number | 否 | 女廁數量 | 5 |
-| unisex_units | number | 否 | 無性別廁所數量 | 2 |
-| accessible_units | number | 否 | 無障礙廁所數量 | 1 |
-| has_water | boolean | 是 | 是否有供水 | true, false |
-| has_lighting | boolean | 是 | 是否有照明 | true, false |
-| status | string | 是 | 營運狀態 | active, maintenance, out_of_service |
-| cleanliness | string | 否 | 清潔狀態 | clean, needs_cleaning, under_cleaning |
-| last_cleaned | number | 否 | 最後清潔時間（Unix timestamp） | 1727664000 |
-| facilities | array | 否 | 額外設施 | ["洗手台", "衛生紙", "洗手乳", "烘手機"] |
-| distance_to_disaster_area | string | 否 | 距災區距離 | 在災區內, 5分鐘步行 |
-| notes | string | 否 | 備註 | 定時清潔，請保持整潔 |
-| info_source | string | 否 | 資料來源 | 環保局 |
-| created_at | number | 是 | 建立時間（Unix timestamp） | 1727664000 |
-| updated_at | number | 是 | 更新時間（Unix timestamp） | 1727750400 |
+```json
+{}
+```
