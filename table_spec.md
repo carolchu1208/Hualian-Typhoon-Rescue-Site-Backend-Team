@@ -283,3 +283,15 @@
 | medical_stations | 生活資源 > 醫療站<br>災民協助 > 醫療站 |
 | shelters | 災民協助 > 庇護所 |
 | volunteer_organizations | ？ |
+
+
+## Reports
+
+| 欄位名稱 | 資料類型 | 必填 | 說明 | 範例 |
+|---------|---------|------|------|------|
+| id | string | 是 | 事件唯一識別碼 | incident-uuid-001 |
+| name | string | 是 | 回報點名稱 | 光復國小積水 |
+| category | string | 是 | 回報點類別 | 加水站、廁所、洗澡點、醫療站、住宿點 |
+| reason | string | 是 | 事件描述 | 校園操場積水深度約50公分 |
+| resolved | boolean | 是 | 是否解決 | true, false |
+
