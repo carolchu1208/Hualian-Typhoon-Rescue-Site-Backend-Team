@@ -295,7 +295,8 @@
 | name | string | 是 | 回報點名稱 | 光復國小積水 |
 | location_type | string | 是 | 回報點類別 | 加水站、廁所、洗澡點、醫療站、住宿點 |
 | reason | string | 是 | 事件描述 | 校園操場積水深度約50公分 |
-| status | boolean | 是 | 是否解決 | true, false |
+| notes | string | 否 | 其他資訊 | 今天星期三 |
+| status | string | 是 | 是否解決 | true, false |
 | created_at | number | 是 | 建立時間（Unix timestamp） | 1727664000 |
 | updated_at | number | 是 | 更新時間（Unix timestamp） | 1727750400 |
 
