@@ -202,45 +202,46 @@
 
 ### human_resources
 
-| 欄位名稱 | 資料類型 | 必填 | 說明 | 範例 |
-| --- | --- | --- | --- | --- |
-| id | string | 是 | 需求唯一識別碼 | hr-26f95ee9-e920-4f44-95a2-d40ded631893 |
-| org | string | 是 | 單位名稱 | 吉安鄉志工服務隊 |
-| address | string | 是 | 工作地點地址 | 花蓮縣吉安鄉中山路三段100號 |
-| phone | string | 是 | 聯絡電話 | 038-123456 |
-| status | string | 是 | 需求狀態 | active, completed, cancelled |
-| is_completed | boolean | 是 | 是否已完成 | true, false |
-| has_medical | boolean | 否 | 是否屬於醫療人力需求 | true, false |
-| created_at | number | 是 | 建立時間 (Unix Timestamp) | 1759164503 |
-| updated_at | number | 是 | 更新時間 (Unix Timestamp) | 1759164503 |
-| role_name | string | 是 | 人力角色名稱 | 搬運志工 |
-| role_type | string | 是 | 人力類型 | 一般志工, 醫療人員, 行政支援, 司機, 安全維護, 其他 |
-| skills | array[string] | 否 | 所需技能或資格 | [“搬運”,“CPR”,“急救證照”] |
-| certifications | array[string] | 否 | 必要證照 | [“急救員證照”] |
-| experience_level | string | 否 | 經驗需求 | level_1, level_2, level_3 |
-| language_requirements | array[string] | 否 | 語言需求 | [“中文”,“英文”] |
-| headcount_need | number | 是 | 需求人數 | 30 |
-| headcount_got | number | 是 | 已到位人數 | 18 |
-| headcount_unit | string | 否 | 人數單位 | 人 |
-| role_status | string | 是 | 人力填補狀態 | completed, pending, partial |
-| shift_start_ts | number | 否 | 班次開始時間 (Unix Timestamp) | 1759164503 |
-| shift_end_ts | number | 否 | 班次結束時間 (Unix Timestamp) | 1759168103 |
-| shift_notes | string | 否 | 班次備註 | 需自備手套與安全鞋 |
-| assignment_timestamp | number | 否 | 派工/報到時間 | 1759164503 |
-| assignment_count | number | 否 | 本次派工人數 | 10 |
-| assignment_notes | string | 否 | 派工備註 | 到現場與組長報到 |
-| total_roles_in_request | number | 否 | 此需求總人力角色數 | 3 |
-| completed_roles_in_request | number | 否 | 此需求已完成人力角色數 | 2 |
-| pending_roles_in_request | number | 否 | 此需求待完成人力角色數 | 1 |
-| total_requests | number | 否 | 系統總人力需求數 | 150 |
-| active_requests | number | 否 | 系統進行中人力需求數 | 45 |
-| completed_requests | number | 否 | 系統已完成人力需求數 | 100 |
-| cancelled_requests | number | 否 | 系統已取消人力需求數 | 5 |
-| total_roles | number | 否 | 系統總人力角色項目數 | 500 |
-| completed_roles | number | 否 | 系統已完成人力角色數 | 300 |
-| pending_roles | number | 否 | 系統待完成人力角色數 | 200 |
-| urgent_requests | number | 否 | 系統緊急人力需求數 | 12 |
-| medical_requests | number | 否 | 系統醫療人力需求數 | 25 |
+| 欄位名稱                       | 資料類型 | 必填 | 說明                      | 範例 |
+|----------------------------| --- |----|-------------------------| --- |
+| id                         | string | 是  | 需求唯一識別碼                 | hr-26f95ee9-e920-4f44-95a2-d40ded631893 |
+| org                        | string | 是  | 單位名稱                    | 吉安鄉志工服務隊 |
+| address                    | string | 是  | 工作地點地址                  | 花蓮縣吉安鄉中山路三段100號 |
+| phone                      | string | 是  | 聯絡電話                    | 038-123456 |
+| status                     | string | 是  | 需求狀態                    | active, completed, cancelled |
+| is_completed               | boolean | 是  | 是否已完成                   | true, false |
+| has_medical                | boolean | 否  | 是否屬於醫療人力需求              | true, false |
+| created_at                 | number | 是  | 建立時間 (Unix Timestamp)   | 1759164503 |
+| updated_at                 | number | 是  | 更新時間 (Unix Timestamp)   | 1759164503 |
+| role_name                  | string | 是  | 人力角色名稱                  | 搬運志工 |
+| role_type                  | string | 是  | 人力類型                    | 一般志工, 醫療人員, 行政支援, 司機, 安全維護, 其他 |
+| skills                     | array[string] | 否  | 所需技能或資格                 | [“搬運”,“CPR”,“急救證照”] |
+| certifications             | array[string] | 否  | 必要證照                    | [“急救員證照”] |
+| experience_level           | string | 否  | 經驗需求                    | level_1, level_2, level_3 |
+| language_requirements      | array[string] | 否  | 語言需求                    | [“中文”,“英文”] |
+| headcount_need             | number | 是  | 需求人數                    | 30 |
+| headcount_got              | number | 是  | 已到位人數                   | 18 |
+| headcount_unit             | string | 否  | 人數單位                    | 人 |
+| role_status                | string | 是  | 人力填補狀態                  | completed, pending, partial |
+| shift_start_ts             | number | 否  | 班次開始時間 (Unix Timestamp) | 1759164503 |
+| shift_end_ts               | number | 否  | 班次結束時間 (Unix Timestamp) | 1759168103 |
+| shift_notes                | string | 否  | 班次備註                    | 需自備手套與安全鞋 |
+| assignment_timestamp       | number | 否  | 派工/報到時間                 | 1759164503 |
+| assignment_count           | number | 否  | 本次派工人數                  | 10 |
+| assignment_notes           | string | 否  | 派工備註                    | 到現場與組長報到 |
+| total_roles_in_request     | number | 否  | 此需求總人力角色數               | 3 |
+| completed_roles_in_request | number | 否  | 此需求已完成人力角色數             | 2 |
+| pending_roles_in_request   | number | 否  | 此需求待完成人力角色數             | 1 |
+| total_requests             | number | 否  | 系統總人力需求數                | 150 |
+| active_requests            | number | 否  | 系統進行中人力需求數              | 45 |
+| completed_requests         | number | 否  | 系統已完成人力需求數              | 100 |
+| cancelled_requests         | number | 否  | 系統已取消人力需求數              | 5 |
+| total_roles                | number | 否  | 系統總人力角色項目數              | 500 |
+| completed_roles            | number | 否  | 系統已完成人力角色數              | 300 |
+| pending_roles              | number | 否  | 系統待完成人力角色數              | 200 |
+| urgent_requests            | number | 否  | 系統緊急人力需求數               | 12 |
+| medical_requests           | number | 否  | 系統醫療人力需求數               | 25 |
+| pii_date                   | number | 是  | 個資同意時間   (Unix Timestamp)   | 1759164503 |
 
 
 ### supplies
@@ -254,6 +255,7 @@
 | notes | string | 否 | 備註 | 無 |
 | created_at | number | 是 | 建立時間（Unix timestamp） | 1727664000 |
 | updated_at | number | 是 | 更新時間（Unix timestamp） | 1727750400 |
+| pii_date                   | number | 是  | 個資同意時間   (Unix Timestamp)   | 1759164503 |
 
 
 ### supply_items 
