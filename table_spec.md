@@ -207,7 +207,7 @@
 | id                         | string | 是  | 需求唯一識別碼                 | hr-26f95ee9-e920-4f44-95a2-d40ded631893 |
 | org                        | string | 是  | 單位名稱                    | 吉安鄉志工服務隊 |
 | address                    | string | 是  | 工作地點地址                  | 花蓮縣吉安鄉中山路三段100號 |
-| phone                      | string | 是  | 聯絡電話                    | 038-123456 |
+| phone                      | string | 否  | 聯絡電話                    | 038-123456 |
 | status                     | string | 是  | 需求狀態                    | active, completed, cancelled |
 | is_completed               | boolean | 是  | 是否已完成                   | true, false |
 | has_medical                | boolean | 否  | 是否屬於醫療人力需求              | true, false |
