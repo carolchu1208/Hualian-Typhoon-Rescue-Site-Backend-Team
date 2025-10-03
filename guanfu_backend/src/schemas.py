@@ -2,6 +2,14 @@ from pydantic import BaseModel, Field
 from typing import List, Optional, Any
 import datetime
 
+# --- 從 models.py 匯入我們定義好的所有 Enum ---
+from .models import (
+    ShelterStatusEnum, MedicalStationTypeEnum, GeneralStatusEnum,
+    MentalHealthDurationEnum, MentalHealthFormatEnum, AccommodationVacancyEnum,
+    ShowerFacilityTypeEnum, WaterTypeEnum, RestroomFacilityTypeEnum,
+    HumanResourceRoleTypeEnum, HumanResourceRoleStatusEnum
+)
+
 
 # ===================================================================
 # 通用基礎模型 (Common Base Models)
@@ -16,7 +24,7 @@ class CollectionBase(BaseModel):
     totalItems: int
     limit: int
     offset: int
-    member: List[Any]  # 會在各 Collection 中被具體類型覆寫
+    member: List[Any]
 
 
 # ===================================================================
@@ -73,7 +81,7 @@ class ShelterBase(BaseModel):
     name: str
     location: str
     phone: str
-    status: str
+    status: ShelterStatusEnum
     link: Optional[str] = None
     capacity: Optional[int] = None
     current_occupancy: Optional[int] = None
@@ -93,7 +101,7 @@ class ShelterPatch(BaseModel):
     name: Optional[str] = None
     location: Optional[str] = None
     phone: Optional[str] = None
-    status: Optional[str] = None
+    status: Optional[ShelterStatusEnum] = None
     link: Optional[str] = None
     capacity: Optional[int] = None
     current_occupancy: Optional[int] = None
@@ -123,9 +131,9 @@ class ShelterCollection(CollectionBase):
 # ===================================================================
 
 class MedicalStationBase(BaseModel):
-    station_type: str
+    station_type: MedicalStationTypeEnum
     name: str
-    status: str
+    status: GeneralStatusEnum
     location: Optional[str] = None
     detailed_address: Optional[str] = None
     phone: Optional[str] = None
@@ -146,9 +154,9 @@ class MedicalStationCreate(MedicalStationBase):
 
 
 class MedicalStationPatch(BaseModel):
-    station_type: Optional[str] = None
+    station_type: Optional[MedicalStationTypeEnum] = None
     name: Optional[str] = None
-    status: Optional[str] = None
+    status: Optional[GeneralStatusEnum] = None
     location: Optional[str] = None
     detailed_address: Optional[str] = None
     phone: Optional[str] = None
@@ -182,13 +190,13 @@ class MedicalStationCollection(CollectionBase):
 # ===================================================================
 
 class MentalHealthResourceBase(BaseModel):
-    duration_type: str
+    duration_type: MentalHealthDurationEnum
     name: str
-    service_format: str
+    service_format: MentalHealthFormatEnum
     service_hours: str
     contact_info: str
     is_free: bool
-    status: str
+    status: GeneralStatusEnum
     emergency_support: bool
     website_url: Optional[str] = None
     target_audience: Optional[List[str]] = []
@@ -206,13 +214,13 @@ class MentalHealthResourceCreate(MentalHealthResourceBase):
 
 
 class MentalHealthResourcePatch(BaseModel):
-    duration_type: Optional[str] = None
+    duration_type: Optional[MentalHealthDurationEnum] = None
     name: Optional[str] = None
-    service_format: Optional[str] = None
+    service_format: Optional[MentalHealthFormatEnum] = None
     service_hours: Optional[str] = None
     contact_info: Optional[str] = None
     is_free: Optional[bool] = None
-    status: Optional[str] = None
+    status: Optional[GeneralStatusEnum] = None
     emergency_support: Optional[bool] = None
     website_url: Optional[str] = None
     target_audience: Optional[List[str]] = None
@@ -245,12 +253,12 @@ class MentalHealthResourceCollection(CollectionBase):
 class AccommodationBase(BaseModel):
     township: str
     name: str
-    has_vacancy: str
+    has_vacancy: AccommodationVacancyEnum
     available_period: str
     contact_info: str
     address: str
     pricing: str
-    status: str
+    status: GeneralStatusEnum
     restrictions: Optional[str] = None
     room_info: Optional[str] = None
     coordinates: Optional[Coordinates] = None
@@ -269,12 +277,12 @@ class AccommodationCreate(AccommodationBase):
 class AccommodationPatch(BaseModel):
     township: Optional[str] = None
     name: Optional[str] = None
-    has_vacancy: Optional[str] = None
+    has_vacancy: Optional[AccommodationVacancyEnum] = None
     available_period: Optional[str] = None
     contact_info: Optional[str] = None
     address: Optional[str] = None
     pricing: Optional[str] = None
-    status: Optional[str] = None
+    status: Optional[GeneralStatusEnum] = None
     restrictions: Optional[str] = None
     room_info: Optional[str] = None
     coordinates: Optional[Coordinates] = None
@@ -311,11 +319,11 @@ class GenderSchedule(BaseModel):
 class ShowerStationBase(BaseModel):
     name: str
     address: str
-    facility_type: str
+    facility_type: ShowerFacilityTypeEnum
     time_slots: str
     available_period: str
     is_free: bool
-    status: str
+    status: GeneralStatusEnum
     requires_appointment: bool
     coordinates: Optional[Coordinates] = None
     phone: Optional[str] = None
@@ -336,11 +344,11 @@ class ShowerStationCreate(ShowerStationBase):
 class ShowerStationPatch(BaseModel):
     name: Optional[str] = None
     address: Optional[str] = None
-    facility_type: Optional[str] = None
+    facility_type: Optional[ShowerFacilityTypeEnum] = None
     time_slots: Optional[str] = None
     available_period: Optional[str] = None
     is_free: Optional[bool] = None
-    status: Optional[str] = None
+    status: Optional[GeneralStatusEnum] = None
     requires_appointment: Optional[bool] = None
     coordinates: Optional[Coordinates] = None
     phone: Optional[str] = None
@@ -374,10 +382,10 @@ class ShowerStationCollection(CollectionBase):
 class WaterRefillStationBase(BaseModel):
     name: str
     address: str
-    water_type: str
+    water_type: WaterTypeEnum
     opening_hours: str
     is_free: bool
-    status: str
+    status: GeneralStatusEnum
     accessibility: bool
     coordinates: Optional[Coordinates] = None
     phone: Optional[str] = None
@@ -397,10 +405,10 @@ class WaterRefillStationCreate(WaterRefillStationBase):
 class WaterRefillStationPatch(BaseModel):
     name: Optional[str] = None
     address: Optional[str] = None
-    water_type: Optional[str] = None
+    water_type: Optional[WaterTypeEnum] = None
     opening_hours: Optional[str] = None
     is_free: Optional[bool] = None
-    status: Optional[str] = None
+    status: Optional[GeneralStatusEnum] = None
     accessibility: Optional[bool] = None
     coordinates: Optional[Coordinates] = None
     phone: Optional[str] = None
@@ -433,12 +441,12 @@ class WaterRefillStationCollection(CollectionBase):
 class RestroomBase(BaseModel):
     name: str
     address: str
-    facility_type: str
+    facility_type: RestroomFacilityTypeEnum
     opening_hours: str
     is_free: bool
     has_water: bool
     has_lighting: bool
-    status: str
+    status: GeneralStatusEnum
     coordinates: Optional[Coordinates] = None
     phone: Optional[str] = None
     male_units: Optional[int] = None
@@ -460,12 +468,12 @@ class RestroomCreate(RestroomBase):
 class RestroomPatch(BaseModel):
     name: Optional[str] = None
     address: Optional[str] = None
-    facility_type: Optional[str] = None
+    facility_type: Optional[RestroomFacilityTypeEnum] = None
     opening_hours: Optional[str] = None
     is_free: Optional[bool] = None
     has_water: Optional[bool] = None
     has_lighting: Optional[bool] = None
-    status: Optional[str] = None
+    status: Optional[GeneralStatusEnum] = None
     coordinates: Optional[Coordinates] = None
     phone: Optional[str] = None
     male_units: Optional[int] = None
@@ -501,13 +509,14 @@ class HumanResourceBase(BaseModel):
     org: str
     address: str
     phone: str
-    status: str
+    status: GeneralStatusEnum
     is_completed: bool
     role_name: str
-    role_type: str
+    role_type: HumanResourceRoleTypeEnum
     headcount_need: int
     headcount_got: int
-    role_status: str
+    role_status: HumanResourceRoleStatusEnum
+    # --- [FIX] Added missing pii_date field ---
     pii_date: int
     has_medical: Optional[bool] = None
     skills: Optional[List[str]] = []
@@ -531,13 +540,13 @@ class HumanResourcePatch(BaseModel):
     org: Optional[str] = None
     address: Optional[str] = None
     phone: Optional[str] = None
-    status: Optional[str] = None
+    status: Optional[GeneralStatusEnum] = None
     is_completed: Optional[bool] = None
     role_name: Optional[str] = None
-    role_type: Optional[str] = None
+    role_type: Optional[HumanResourceRoleTypeEnum] = None
     headcount_need: Optional[int] = None
     headcount_got: Optional[int] = None
-    role_status: Optional[str] = None
+    role_status: Optional[HumanResourceRoleStatusEnum] = None
     pii_date: Optional[int] = None
     has_medical: Optional[bool] = None
     skills: Optional[List[str]] = None
@@ -557,12 +566,19 @@ class HumanResource(HumanResourceBase):
     id: str
     created_at: int
     updated_at: int
-    # Read-only summary fields
+    # --- [FIX] Added missing summary/read-only fields ---
     total_roles_in_request: Optional[int] = None
     completed_roles_in_request: Optional[int] = None
     pending_roles_in_request: Optional[int] = None
-
-    # ... and other summary fields if they need to be returned
+    total_requests: Optional[int] = None
+    active_requests: Optional[int] = None
+    completed_requests: Optional[int] = None
+    cancelled_requests: Optional[int] = None
+    total_roles: Optional[int] = None
+    completed_roles: Optional[int] = None
+    pending_roles: Optional[int] = None
+    urgent_requests: Optional[int] = None
+    medical_requests: Optional[int] = None
 
     class Config:
         from_attributes = True
@@ -576,7 +592,6 @@ class HumanResourceCollection(CollectionBase):
 # 物資項目 (Supply Items) & 物資單 (Supplies)
 # ===================================================================
 
-# --- SupplyItem ---
 class SupplyItemBase(BaseModel):
     total_number: int
     tag: Optional[str] = None
@@ -609,13 +624,11 @@ class SupplyItemCollection(CollectionBase):
     member: List[SupplyItem]
 
 
-# --- Supply ---
 class SupplyBase(BaseModel):
     name: Optional[str] = None
     address: Optional[str] = None
     phone: Optional[str] = None
     notes: Optional[str] = None
-    pii_date: int
 
 
 class SupplyCreate(SupplyBase):
@@ -627,14 +640,13 @@ class SupplyPatch(BaseModel):
     address: Optional[str] = None
     phone: Optional[str] = None
     notes: Optional[str] = None
-    pii_date: Optional[int] = None
 
 
 class Supply(SupplyBase):
     id: str
     created_at: int
     updated_at: int
-    supply_items: List[SupplyItem] = []  # To embed related items
+    supply_items: List[SupplyItem] = []
 
     class Config:
         from_attributes = True
@@ -644,10 +656,13 @@ class SupplyCollection(CollectionBase):
     member: List[Supply]
 
 
-# --- Schema for POST /supplies/{id} endpoint ---
+# --- [FIX] Added missing SupplyItemDistribution schema ---
 class SupplyItemDistribution(BaseModel):
-    id: str  # supply_item ID
-    count: int = Field(..., gt=0)  # count must be a positive integer
+    """
+    用於 POST /supplies/{id} 端點，代表一次配送的物資項目和數量。
+    """
+    id: str  # 這是 supply_item 的 ID
+    count: int = Field(..., gt=0, description="本次配送新增的數量，必須是正整數")
 
 
 # ===================================================================
