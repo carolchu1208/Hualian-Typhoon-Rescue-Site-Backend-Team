@@ -11,3 +11,26 @@ services:
       - "5432:5432"
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
+    networks:
+      - guanfu-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: guanfu-backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      ENVIRONMENT: ${ENVIRONMENT}
+      APP_TITLE: ${APP_TITLE}
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    networks:
+      - guanfu-network
+
+networks:
+  guanfu-network:
+    driver: bridge

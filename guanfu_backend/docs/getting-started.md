@@ -17,8 +17,33 @@ Python 在套件管理方面可能因不同專案需要不同版本的套件，�
 
 - macOS 作業系統
 - Homebrew（macOS 套件管理工具）
+- Docker Desktop（用於執行 PostgreSQL 資料庫）
 
-## 安裝步驟
+## 快速開始（給有經驗的開發者）
+
+```bash
+# 安裝工具
+brew install uv
+
+# 設定 Python 環境
+cd guanfu_backend
+uv python install 3.13
+uv venv
+source .venv/bin/activate
+uv pip install -e .
+
+# 設定環境變數
+cp .env.example .env.dev
+# 編輯 .env.dev 填入資料庫設定
+
+# 啟動資料庫與開發伺服器
+docker-compose --env-file .env.dev up -d postgres
+uvicorn src.main:app --reload
+```
+
+訪問 http://localhost:8000/docs 查看 API 文件。
+
+## 詳細安裝步驟
 
 ### 1. 安裝 uv
 
@@ -33,6 +58,19 @@ brew install uv
 ```bash
 uv --version
 ```
+
+### 2. 安裝 Docker Desktop（如果尚未安裝）
+
+本專案使用 Docker 來執行 PostgreSQL 資料庫。
+
+```bash
+# 使用 Homebrew 安裝 Docker Desktop
+brew install --cask docker
+
+# 或前往官網下載：https://www.docker.com/products/docker-desktop
+```
+
+安裝後，啟動 Docker Desktop 應用程式。
 
 ### 3. 設定 Python 環境
 
@@ -91,32 +129,47 @@ DATABASE_URL=postgresql://username:password@localhost:5432/database_name
 
 本專案使用 Docker Compose 來執行 PostgreSQL 資料庫，這樣可以確保所有開發者使用相同的資料庫版本和設定。
 
-**使用 Docker Compose 啟動資料庫：**
+#### 方式一：本地開發（推薦）
+
+適合日常開發工作，只啟動資料庫，應用程式在本地執行：
+
+**步驟 1：啟動資料庫**
 
 ```bash
-# 啟動 PostgreSQL 容器（在背景執行）
-docker-compose --env-file .env.dev up -d
+# 只啟動 PostgreSQL 容器（在背景執行）
+docker-compose --env-file .env.dev up -d postgres
 
 # 確認容器是否正在執行
 docker ps
 
 # 查看資料庫日誌（如果需要）
-docker logs postgres
+docker-compose logs -f postgres
 ```
 
-**停止資料庫：**
+**步驟 2：啟動開發伺服器**
+
+確保已啟動虛擬環境，然後執行：
 
 ```bash
-# 停止並移除容器
-docker-compose down
+# 啟動虛擬環境（如果尚未啟動）
+source .venv/bin/activate
+
+# 啟動開發伺服器（帶有 hot reload）
+uvicorn src.main:app --reload
 ```
 
-**注意事項：**
-- 資料庫設定（使用者名稱、密碼、資料庫名稱）定義在 `.env.dev` 檔案中
-- 資料會持久化儲存在 `postgres-data/` 資料夾中
-- 如果本地已有其他服務佔用 5432 埠號，需要先停止該服務
+伺服器啟動後，開啟瀏覽器訪問：
 
-**替代方案：使用本地 PostgreSQL**
+- API 文件：http://localhost:8000/docs
+- 替代文件：http://localhost:8000/redoc
+
+**優點：**
+- 程式碼變更立即生效（hot reload）
+- 可以使用 Python debugger
+- 開發迭代速度快
+- 只有資料庫在 Docker 中執行
+
+**替代方案：使用本地 PostgreSQL（不使用 Docker）**
 
 如果您不想使用 Docker，也可以使用 Homebrew 安裝的本地 PostgreSQL：
 
@@ -126,18 +179,49 @@ brew services start postgresql@16
 
 # 確認是否正在接受連線
 pg_isready
-```
 
-### 6. 啟動開發伺服器
-
-```bash
+# 啟動開發伺服器
+source .venv/bin/activate
 uvicorn src.main:app --reload
 ```
 
-伺服器啟動後，開啟瀏覽器訪問：
+#### 方式二：完整 Docker 部署
 
-- API 文件：http://localhost:8000/docs
-- 替代文件：http://localhost:8000/redoc
+適合測試完整容器化環境或準備部署：
+
+```bash
+# 啟動 PostgreSQL 和後端應用程式
+docker-compose --env-file .env.dev up -d --build
+
+# 查看後端日誌
+docker-compose logs -f backend
+
+# 查看所有服務狀態
+docker-compose ps
+```
+
+**使用時機：**
+- 測試 Docker 部署設定
+- CI/CD 流程
+- 模擬生產環境
+- 確保團隊環境一致性
+
+**停止服務：**
+
+```bash
+# 停止所有容器
+docker-compose down
+
+# 停止並刪除資料卷（會清除資料庫資料）
+docker-compose down -v
+```
+
+**注意事項：**
+- 資料庫設定（使用者名稱、密碼、資料庫名稱）定義在 `.env.dev` 檔案中
+- 資料會持久化儲存在 `postgres-data/` 資料夾中
+- 如果本地已有其他服務佔用 5432 埠號，需要先停止該服務
+- 本地開發使用 `localhost` 連接資料庫
+- Docker 容器間使用 `postgres` 服務名稱連接資料庫
 
 ## 常用指令
 
@@ -191,9 +275,12 @@ guanfu_backend/
 │   ├── config.py          # 應用程式設定
 │   └── routers/           # API 路由處理器
 ├── docs/                  # 專案文件
+├── Dockerfile             # Docker 映像檔建構設定
+├── docker-compose.yaml    # Docker 服務編排設定
+├── .dockerignore          # Docker 建構時排除的檔案
 ├── pyproject.toml         # 專案設定與套件依賴
 ├── poetry.lock            # 套件版本鎖定檔案
-└── .env                   # 環境變數（不會提交到 Git）
+└── .env.dev               # 開發環境變數（不會提交到 Git）
 ```
 
 ## 常見問題
@@ -217,6 +304,47 @@ A: 命令提示字元前會顯示 `(.venv)`，例如：`(.venv) user@computer:~/
 ### Q: uv 和 pip 有什麼不同？
 
 A: uv 是 pip 的現代化替代品，功能相同但速度快得多，且內建更好的依賴解析機制。
+
+### Q: 本地開發和 Docker 部署有什麼區別？何時使用哪一個？
+
+A:
+- **本地開發（推薦用於日常開發）**：只用 Docker 跑資料庫，應用程式在本地執行，支援 hot reload，開發速度快
+- **Docker 部署（用於測試和部署）**：整個應用程式都在 Docker 中執行，適合測試部署設定、CI/CD、生產環境
+
+大部分時間建議使用本地開發模式，只有在需要測試完整容器化環境時才使用 Docker 部署。
+
+### Q: 為什麼會有 .env.dev 檔案？
+
+A: `.env.dev` 是開發環境的設定檔，包含資料庫連線等敏感資訊，不會提交到 Git。生產環境會使用不同的設定檔（如 `.env.prod`）。
+
+## Docker 相關檔案說明
+
+本專案包含以下 Docker 相關檔案：
+
+### Dockerfile
+
+多階段建構檔案，用於建立優化的生產環境映像檔（約 198MB）：
+
+- **第一階段（Builder）**：安裝編譯工具並建置 Python 套件
+- **第二階段（Runtime）**：只包含執行所需的最小依賴，不含編譯工具
+
+### docker-compose.yaml
+
+編排 PostgreSQL 和後端服務：
+
+- 定義服務間的網路連接
+- 管理環境變數和連接埠對應
+- 支援只啟動部分服務（如只啟動資料庫）
+
+### .dockerignore
+
+排除不需要打包進 Docker 映像檔的檔案：
+
+- 虛擬環境（`.venv/`）
+- 環境變數檔案（`.env*`）
+- Git 相關檔案
+- IDE 設定檔
+- 文件檔案
 
 ## 下一步
 
