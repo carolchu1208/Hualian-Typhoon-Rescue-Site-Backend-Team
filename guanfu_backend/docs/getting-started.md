@@ -89,7 +89,44 @@ DATABASE_URL=postgresql://username:password@localhost:5432/database_name
 
 ### 5. 啟動 PostgreSQL 資料庫
 
-在啟動開發伺服器前，需要先確保 PostgreSQL 資料庫正在執行並接受連線。請使用 Homebrew 啟動您安裝的 PostgreSQL 版本。
+本專案使用 Docker Compose 來執行 PostgreSQL 資料庫，這樣可以確保所有開發者使用相同的資料庫版本和設定。
+
+**使用 Docker Compose 啟動資料庫：**
+
+```bash
+# 啟動 PostgreSQL 容器（在背景執行）
+docker-compose --env-file .env.dev up -d
+
+# 確認容器是否正在執行
+docker ps
+
+# 查看資料庫日誌（如果需要）
+docker logs postgres
+```
+
+**停止資料庫：**
+
+```bash
+# 停止並移除容器
+docker-compose down
+```
+
+**注意事項：**
+- 資料庫設定（使用者名稱、密碼、資料庫名稱）定義在 `.env.dev` 檔案中
+- 資料會持久化儲存在 `postgres-data/` 資料夾中
+- 如果本地已有其他服務佔用 5432 埠號，需要先停止該服務
+
+**替代方案：使用本地 PostgreSQL**
+
+如果您不想使用 Docker，也可以使用 Homebrew 安裝的本地 PostgreSQL：
+
+```bash
+# 啟動本地 PostgreSQL
+brew services start postgresql@16
+
+# 確認是否正在接受連線
+pg_isready
+```
 
 ### 6. 啟動開發伺服器
 

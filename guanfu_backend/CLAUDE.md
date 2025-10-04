@@ -60,13 +60,25 @@ The backend provides the following resource endpoints:
 
 To start the project after initial setup:
 
-1. Activate virtual environment: `source .venv/bin/activate`
-2. Ensure PostgreSQL is running
+1. Start PostgreSQL with Docker Compose: `docker-compose --env-file .env.dev up -d`
+2. Activate virtual environment: `source .venv/bin/activate`
 3. Start development server: `uvicorn src.main:app --reload`
 4. Deactivate virtual environment when done: `deactivate`
+5. Stop PostgreSQL: `docker-compose down`
 
 For detailed setup instructions, see [docs/getting-started.md](docs/getting-started.md)
 
+### Database Setup with Docker Compose
+
+The project uses Docker Compose to run PostgreSQL for local development:
+
+- **Configuration**: Database settings are defined in `.env.dev`
+- **Start database**: `docker-compose --env-file .env.dev up -d`
+- **Stop database**: `docker-compose down`
+- **View logs**: `docker logs postgres`
+- **Connection details**: Defined by `POSTGRES_USER`, `POSTGRES_PASSWORD`, and `POSTGRES_DB` in `.env.dev`
+
+The Python application connects to the database using the `DATABASE_URL` environment variable from `.env.dev`.
 ## Development Notes
 
 - Database specifications are documented in `table_spec.md`
