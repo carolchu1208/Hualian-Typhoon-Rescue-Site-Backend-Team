@@ -6,12 +6,12 @@ from ..database import get_db
 
 router = APIRouter(
     prefix="/volunteer_organizations",
-    tags=["Volunteer Organizations"],
+    tags=["志工招募單位（Volunteer Organizations）"],
     responses={404: {"description": "Not found"}},
 )
 
 
-@router.get("/", response_model=schemas.VolunteerOrgCollection)
+@router.get("/", response_model=schemas.VolunteerOrgCollection, summary="取得志工招募單位清單")
 def list_volunteer_orgs(
         limit: int = Query(20, ge=1, le=200),
         offset: int = Query(0, ge=0),
@@ -25,7 +25,7 @@ def list_volunteer_orgs(
     return {"member": orgs, "totalItems": total, "limit": limit, "offset": offset}
 
 
-@router.post("/", response_model=schemas.VolunteerOrganization, status_code=201)
+@router.post("/", response_model=schemas.VolunteerOrganization, status_code=201, summary="建立志工招募單位")
 def create_volunteer_org(
         org_in: schemas.VolunteerOrgCreate, db: Session = Depends(get_db)
 ):
@@ -35,7 +35,7 @@ def create_volunteer_org(
     return crud.create(db, models.VolunteerOrganization, obj_in=org_in)
 
 
-@router.get("/{id}", response_model=schemas.VolunteerOrganization)
+@router.get("/{id}", response_model=schemas.VolunteerOrganization, summary="取得特定志工招募單位")
 def get_volunteer_org(id: str, db: Session = Depends(get_db)):
     """
     取得單一志工招募單位
@@ -46,7 +46,7 @@ def get_volunteer_org(id: str, db: Session = Depends(get_db)):
     return db_org
 
 
-@router.patch("/{id}", response_model=schemas.VolunteerOrganization)
+@router.patch("/{id}", response_model=schemas.VolunteerOrganization, summary="更新特定志工招募單位")
 def patch_volunteer_org(
         id: str, org_in: schemas.VolunteerOrgPatch, db: Session = Depends(get_db)
 ):

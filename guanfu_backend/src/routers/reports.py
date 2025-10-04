@@ -6,14 +6,14 @@ from ..database import get_db
 
 router = APIRouter(
     prefix="/reports",
-    tags=["Reports"],
+    tags=["回報事件（Reports）"],
     responses={404: {"description": "Not found"}},
 )
 
 
-@router.get("/", response_model=schemas.ReportCollection)
+@router.get("/", response_model=schemas.ReportCollection, summary="取得回報事件清單")
 def list_reports(
-        status: Optional[str] = Query(None),
+        status: Optional[bool] = Query(None),
         limit: int = Query(50, ge=1, le=500),
         offset: int = Query(0, ge=0),
         db: Session = Depends(get_db)
@@ -27,7 +27,7 @@ def list_reports(
     return {"member": reports, "totalItems": total, "limit": limit, "offset": offset}
 
 
-@router.post("/", response_model=schemas.Report, status_code=201)
+@router.post("/", response_model=schemas.Report, status_code=201, summary="建立回報事件")
 def create_report(
         report_in: schemas.ReportCreate, db: Session = Depends(get_db)
 ):
@@ -37,7 +37,7 @@ def create_report(
     return crud.create(db, models.Report, obj_in=report_in)
 
 
-@router.get("/{id}", response_model=schemas.Report)
+@router.get("/{id}", response_model=schemas.Report, summary="取得特定回報事件")
 def get_report(id: str, db: Session = Depends(get_db)):
     """
     取得單一回報事件
@@ -48,7 +48,7 @@ def get_report(id: str, db: Session = Depends(get_db)):
     return db_report
 
 
-@router.patch("/{id}", response_model=schemas.Report)
+@router.patch("/{id}", response_model=schemas.Report, summary="更新特定回報事件")
 def patch_report(
         id: str, report_in: schemas.ReportPatch, db: Session = Depends(get_db)
 ):

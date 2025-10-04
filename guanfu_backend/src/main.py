@@ -27,7 +27,10 @@ app = FastAPI(
     version="v1.1.0",
     description="光復主站api",
     servers=servers,
-    swagger_ui_parameters={"defaultModelsExpandDepth": -1}
+    swagger_ui_parameters={
+        "defaultModelsExpandDepth": -1,  # 隱藏model schema
+        "docExpansion": "none",  # 預設label收起
+    }
 )
 
 
