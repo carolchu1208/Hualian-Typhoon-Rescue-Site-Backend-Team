@@ -85,10 +85,13 @@ class RestroomFacilityTypeEnum(enum.Enum):
 
 class HumanResourceRoleTypeEnum(enum.Enum):
     general_volunteer = "一般志工"
-    medical_staff = "醫療人員"
+    medical_staff = "醫療照護"
+    logistics = "後勤支援"
+    cleaning = "清潔整理"
     admin_support = "行政支援"
     driver = "司機"
     security = "安全維護"
+    professional = "專業技術"
     other = "其他"
 
 
@@ -96,6 +99,15 @@ class HumanResourceRoleStatusEnum(enum.Enum):
     completed = "completed"
     pending = "pending"
     partial = "partial"
+
+class SupplyItemTypeEnum(enum.Enum):
+    food = "飲食"
+    medical_supplies = "醫療用品"
+    groceries = "生活用品"
+    machinery = "大型機具"
+    equipment = "動物醫療"
+    plumber = "水電"
+    other = "其他"
 
 
 # ===================================================================
@@ -330,7 +342,7 @@ class SupplyItem(Base):
     id = Column(String, primary_key=True, default=generate_uuid_str)
     supply_id = Column(String, ForeignKey("supplies.id"), nullable=False)
     total_number = Column(Integer, nullable=False)
-    tag = Column(String)
+    tag = Column(Enum(SupplyItemTypeEnum), nullable=False)
     name = Column(String)
     received_count = Column(Integer)
     unit = Column(String)
