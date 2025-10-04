@@ -2,7 +2,6 @@ from pydantic import BaseModel, Field
 from typing import List, Optional, Any
 import datetime
 
-# --- 從 models.py 匯入我們定義好的所有 Enum ---
 from .models import (
     ShelterStatusEnum, MedicalStationTypeEnum, GeneralStatusEnum,
     MentalHealthDurationEnum, MentalHealthFormatEnum, AccommodationVacancyEnum,
@@ -516,7 +515,6 @@ class HumanResourceBase(BaseModel):
     headcount_need: int
     headcount_got: int
     role_status: HumanResourceRoleStatusEnum
-    # --- [FIX] Added missing pii_date field ---
     pii_date: int
     has_medical: Optional[bool] = None
     skills: Optional[List[str]] = []
@@ -632,7 +630,7 @@ class SupplyBase(BaseModel):
 
 
 class SupplyCreate(SupplyBase):
-    pass
+    supplies: List[SupplyItemBase]
 
 
 class SupplyPatch(BaseModel):
@@ -646,7 +644,7 @@ class Supply(SupplyBase):
     id: str
     created_at: int
     updated_at: int
-    supply_items: List[SupplyItem] = []
+    supplies: List[SupplyItem] = []
 
     class Config:
         from_attributes = True
@@ -656,12 +654,8 @@ class SupplyCollection(CollectionBase):
     member: List[Supply]
 
 
-# --- [FIX] Added missing SupplyItemDistribution schema ---
 class SupplyItemDistribution(BaseModel):
-    """
-    用於 POST /supplies/{id} 端點，代表一次配送的物資項目和數量。
-    """
-    id: str  # 這是 supply_item 的 ID
+    id: str
     count: int = Field(..., gt=0, description="本次配送新增的數量，必須是正整數")
 
 
@@ -674,7 +668,7 @@ class ReportBase(BaseModel):
     location_type: str
     location_id: str
     reason: str
-    status: str
+    status: bool
     notes: Optional[str] = None
 
 
@@ -687,7 +681,7 @@ class ReportPatch(BaseModel):
     location_type: Optional[str] = None
     location_id: Optional[str] = None
     reason: Optional[str] = None
-    status: Optional[str] = None
+    status: Optional[bool] = None
     notes: Optional[str] = None
 
 
