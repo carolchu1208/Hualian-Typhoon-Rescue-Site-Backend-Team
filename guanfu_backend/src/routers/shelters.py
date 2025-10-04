@@ -3,17 +3,18 @@ from sqlalchemy.orm import Session
 from typing import Optional
 from .. import crud, models, schemas
 from ..database import get_db
+from ..schemas import ShelterStatusEnum
 
 router = APIRouter(
     prefix="/shelters",
-    tags=["Shelters"],
+    tags=["庇護所（Shelters）"],
     responses={404: {"description": "Not found"}},
 )
 
 
-@router.get("/", response_model=schemas.ShelterCollection)
+@router.get("/", response_model=schemas.ShelterCollection, summary="取得庇護所清單")
 def list_shelters(
-        status: Optional[str] = Query(None),
+        status: Optional[ShelterStatusEnum] = Query(None),
         limit: int = Query(50, ge=1, le=500),
         offset: int = Query(0, ge=0),
         db: Session = Depends(get_db)
@@ -27,7 +28,7 @@ def list_shelters(
     return {"member": shelters, "totalItems": total, "limit": limit, "offset": offset}
 
 
-@router.post("/", response_model=schemas.Shelter, status_code=201)
+@router.post("/", response_model=schemas.Shelter, status_code=201, summary="建立庇護所")
 def create_shelter(
         shelter_in: schemas.ShelterCreate, db: Session = Depends(get_db)
 ):
@@ -37,7 +38,7 @@ def create_shelter(
     return crud.create(db, models.Shelter, obj_in=shelter_in)
 
 
-@router.get("/{id}", response_model=schemas.Shelter)
+@router.get("/{id}", response_model=schemas.Shelter, summary="取得特定庇護所")
 def get_shelter(id: str, db: Session = Depends(get_db)):
     """
     取得單一庇護所
@@ -48,7 +49,7 @@ def get_shelter(id: str, db: Session = Depends(get_db)):
     return db_shelter
 
 
-@router.patch("/{id}", response_model=schemas.Shelter)
+@router.patch("/{id}", response_model=schemas.Shelter, summary="更新特定庇護所")
 def patch_shelter(
         id: str, shelter_in: schemas.ShelterPatch, db: Session = Depends(get_db)
 ):

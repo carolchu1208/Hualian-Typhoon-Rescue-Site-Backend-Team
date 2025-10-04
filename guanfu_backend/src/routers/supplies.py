@@ -6,12 +6,12 @@ from ..database import get_db
 
 router = APIRouter(
     prefix="/supplies",
-    tags=["Supplies"],
+    tags=["供應單（Supplies）"],
     responses={404: {"description": "Not found"}},
 )
 
 
-@router.get("/", response_model=schemas.SupplyCollection)
+@router.get("/", response_model=schemas.SupplyCollection, summary="取得供應單清單")
 def list_supplies(
         embed: Optional[str] = Query(None, enum=["all"]),
         limit: int = Query(50, ge=1, le=500),
@@ -23,7 +23,7 @@ def list_supplies(
     """
     query = db.query(models.Supply)
     if embed == "all":
-        query = query.options(joinedload(models.Supply.supply_items))
+        query = query.options(joinedload(models.Supply.supplies))
 
     total = query.count()
     supplies = query.offset(offset).limit(limit).all()
@@ -31,7 +31,7 @@ def list_supplies(
     return {"member": supplies, "totalItems": total, "limit": limit, "offset": offset}
 
 
-@router.post("/", response_model=schemas.Supply, status_code=201)
+@router.post("/", response_model=schemas.Supply, status_code=201, summary="建立供應單")
 def create_supply(
         supply_in: schemas.SupplyCreate, db: Session = Depends(get_db)
 ):
@@ -42,12 +42,12 @@ def create_supply(
     return crud.create_supply_with_items(db, obj_in=supply_in)
 
 
-@router.get("/{id}", response_model=schemas.Supply)
+@router.get("/{id}", response_model=schemas.Supply, summary="取得特定供應單")
 def get_supply(id: str, db: Session = Depends(get_db)):
     """
     取得單一供應單 (包含其所有物資項目)
     """
-    db_supply = db.query(models.Supply).options(joinedload(models.Supply.supply_items)).filter(models.Supply.id == id).first()
+    db_supply = db.query(models.Supply).options(joinedload(models.Supply.supplies)).filter(models.Supply.id == id).first()
     if db_supply is None:
         raise HTTPException(status_code=404, detail="Supply not found")
     return db_supply
@@ -57,7 +57,7 @@ def get_supply(id: str, db: Session = Depends(get_db)):
 # @router.patch("/{id}", response_model=schemas.Supply)
 # def patch_supply(...):
 
-@router.post("/{id}", response_model=List[schemas.SupplyItem])
+@router.post("/{id}", response_model=List[schemas.SupplyItem], summary="更新特定供應單")
 def distribute_supply_items(
         id: str, items_in: List[schemas.SupplyItemDistribution], db: Session = Depends(get_db)
 ):

@@ -3,19 +3,20 @@ from sqlalchemy.orm import Session
 from typing import Optional
 from .. import crud, models, schemas
 from ..database import get_db
+from ..schemas import GeneralStatusEnum, AccommodationVacancyEnum
 
 router = APIRouter(
     prefix="/accommodations",
-    tags=["Accommodations"],
+    tags=["住宿資源（Accommodations）"],
     responses={404: {"description": "Not found"}},
 )
 
 
-@router.get("/", response_model=schemas.AccommodationCollection)
+@router.get("/", response_model=schemas.AccommodationCollection, summary="取得庇護所清單")
 def list_accommodations(
-        status: Optional[str] = Query(None),
+        status: Optional[GeneralStatusEnum] = Query(None),
         township: Optional[str] = Query(None),
-        has_vacancy: Optional[str] = Query(None),
+        has_vacancy: Optional[AccommodationVacancyEnum] = Query(None),
         limit: int = Query(50, ge=1, le=500),
         offset: int = Query(0, ge=0),
         db: Session = Depends(get_db)
@@ -33,7 +34,7 @@ def list_accommodations(
     return {"member": accommodations, "totalItems": total, "limit": limit, "offset": offset}
 
 
-@router.post("/", response_model=schemas.Accommodation, status_code=201)
+@router.post("/", response_model=schemas.Accommodation, status_code=201, summary="建立庇護所")
 def create_accommodation(
         accommodation_in: schemas.AccommodationCreate, db: Session = Depends(get_db)
 ):
@@ -43,7 +44,7 @@ def create_accommodation(
     return crud.create(db, models.Accommodation, obj_in=accommodation_in)
 
 
-@router.get("/{id}", response_model=schemas.Accommodation)
+@router.get("/{id}", response_model=schemas.Accommodation, summary="取得特定庇護所")
 def get_accommodation(id: str, db: Session = Depends(get_db)):
     """
     取得單一住宿資源
@@ -54,7 +55,7 @@ def get_accommodation(id: str, db: Session = Depends(get_db)):
     return db_accommodation
 
 
-@router.patch("/{id}", response_model=schemas.Accommodation)
+@router.patch("/{id}", response_model=schemas.Accommodation, summary="更新特定庇護所資料")
 def patch_accommodation(
         id: str, accommodation_in: schemas.AccommodationPatch, db: Session = Depends(get_db)
 ):

@@ -1,20 +1,23 @@
+from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from typing import Optional
+
 from .. import crud, models, schemas
 from ..database import get_db
+from ..schemas import GeneralStatusEnum, ShowerFacilityTypeEnum
 
 router = APIRouter(
     prefix="/shower_stations",
-    tags=["Shower Stations"],
+    tags=["洗澡點（Shower Stations）"],
     responses={404: {"description": "Not found"}},
 )
 
 
-@router.get("/", response_model=schemas.ShowerStationCollection)
+@router.get("/", response_model=schemas.ShowerStationCollection, summary="取得洗澡點清單")
 def list_shower_stations(
-        status: Optional[str] = Query(None),
-        facility_type: Optional[str] = Query(None),
+        status: Optional[GeneralStatusEnum] = Query(None),
+        facility_type: Optional[ShowerFacilityTypeEnum] = Query(None),
         is_free: Optional[bool] = Query(None),
         requires_appointment: Optional[bool] = Query(None),
         limit: int = Query(50, ge=1, le=500),
@@ -35,7 +38,7 @@ def list_shower_stations(
     return {"member": stations, "totalItems": total, "limit": limit, "offset": offset}
 
 
-@router.post("/", response_model=schemas.ShowerStation, status_code=201)
+@router.post("/", response_model=schemas.ShowerStation, status_code=201, summary="建立洗澡點")
 def create_shower_station(
         station_in: schemas.ShowerStationCreate, db: Session = Depends(get_db)
 ):
@@ -45,7 +48,7 @@ def create_shower_station(
     return crud.create(db, models.ShowerStation, obj_in=station_in)
 
 
-@router.get("/{id}", response_model=schemas.ShowerStation)
+@router.get("/{id}", response_model=schemas.ShowerStation, summary="取得特定洗澡點")
 def get_shower_station(id: str, db: Session = Depends(get_db)):
     """
     取得單一洗澡點
@@ -56,7 +59,7 @@ def get_shower_station(id: str, db: Session = Depends(get_db)):
     return db_station
 
 
-@router.patch("/{id}", response_model=schemas.ShowerStation)
+@router.patch("/{id}", response_model=schemas.ShowerStation, summary="更新特定洗澡點")
 def patch_shower_station(
         id: str, station_in: schemas.ShowerStationPatch, db: Session = Depends(get_db)
 ):
