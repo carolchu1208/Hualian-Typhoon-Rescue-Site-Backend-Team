@@ -323,6 +323,7 @@ class HumanResource(Base):
     assignment_timestamp = Column(BigInteger)
     assignment_count = Column(Integer)
     assignment_notes = Column(Text)
+    pii_date = Column(BigInteger, nullable=False, default=current_timestamp_int)
 
 
 class Supply(Base):
@@ -334,7 +335,8 @@ class Supply(Base):
     address = Column(String)
     phone = Column(String)
     notes = Column(Text)
-    supply_items = relationship("SupplyItem", back_populates="supply", cascade="all, delete-orphan")
+    supplies = relationship("SupplyItem", back_populates="supply", cascade="all, delete-orphan")
+    pii_date = Column(BigInteger, nullable=False, default=current_timestamp_int)
 
 
 class SupplyItem(Base):
@@ -346,7 +348,7 @@ class SupplyItem(Base):
     name = Column(String)
     received_count = Column(Integer)
     unit = Column(String)
-    supply = relationship("Supply", back_populates="supply_items")
+    supply = relationship("Supply", back_populates="supplies")
 
 
 class Report(Base):
@@ -359,4 +361,4 @@ class Report(Base):
     location_type = Column(String, nullable=False)
     reason = Column(Text, nullable=False)
     notes = Column(Text)
-    status = Column(String, nullable=False)
+    status = Column(Boolean, nullable=False)
