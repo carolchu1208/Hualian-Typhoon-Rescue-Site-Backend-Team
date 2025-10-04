@@ -56,6 +56,17 @@ The backend provides the following resource endpoints:
 - **UI Design (Figma)**: https://www.figma.com/design/3HmmJtwok42obsXH93s21b/
 - **Backend Repository**: https://github.com/PichuChen/guangfu250923
 
+## Quick Start
+
+To start the project after initial setup:
+
+1. Activate virtual environment: `source .venv/bin/activate`
+2. Ensure PostgreSQL is running
+3. Start development server: `uvicorn src.main:app --reload`
+4. Deactivate virtual environment when done: `deactivate`
+
+For detailed setup instructions, see [docs/getting-started.md](docs/getting-started.md)
+
 ## Development Notes
 
 - Database specifications are documented in `table_spec.md`
