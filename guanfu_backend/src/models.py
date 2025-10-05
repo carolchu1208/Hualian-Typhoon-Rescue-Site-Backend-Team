@@ -84,15 +84,15 @@ class RestroomFacilityTypeEnum(enum.Enum):
 
 
 class HumanResourceRoleTypeEnum(enum.Enum):
-    general_volunteer = "一般志工"
-    medical_staff = "醫療照護"
-    logistics = "後勤支援"
-    cleaning = "清潔整理"
-    admin_support = "行政支援"
-    driver = "司機"
-    security = "安全維護"
-    professional = "專業技術"
-    other = "其他"
+    general_volunteer = "general_volunteer"
+    medical_staff = "medical_staff"
+    logistics = "logistics"
+    cleaning = "cleaning"
+    admin_support = "admin_support"
+    driver = "driver"
+    security = "security"
+    professional = "professional"
+    other = "other"
 
 
 class HumanResourceRoleStatusEnum(enum.Enum):
@@ -108,13 +108,13 @@ class HumanResourceExperienceLevelEnum(enum.Enum):
 
 
 class SupplyItemTypeEnum(enum.Enum):
-    food = "飲食"
-    medical_supplies = "醫療用品"
-    groceries = "生活用品"
-    machinery = "大型機具"
-    equipment = "動物醫療"
-    plumber = "水電"
-    other = "其他"
+    food = "food"
+    medical_supplies = "medical_supplies"
+    groceries = "groceries"
+    machinery = "machinery"
+    equipment = "equipment"
+    plumber = "plumber"
+    other = "other"
 
 
 # ===================================================================
