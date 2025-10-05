@@ -58,15 +58,70 @@ The backend provides the following resource endpoints:
 
 ## Quick Start
 
-To start the project after initial setup:
+### Local Development (Recommended)
 
-1. Activate virtual environment: `source .venv/bin/activate`
-2. Ensure PostgreSQL is running
+For active development with hot reload:
+
+1. Start PostgreSQL with Docker Compose: `docker-compose --env-file .env.dev up -d postgres`
+2. Activate virtual environment: `source .venv/bin/activate`
 3. Start development server: `uvicorn src.main:app --reload`
-4. Deactivate virtual environment when done: `deactivate`
+4. Access API at http://localhost:8000/docs
+5. Deactivate virtual environment when done: `deactivate`
+6. Stop PostgreSQL: `docker-compose down`
+
+**Benefits of local development:**
+- Hot reload on code changes (via `--reload` flag)
+- Faster iteration cycle
+- Direct access to Python debugger
+- Only database runs in Docker
+
+### Docker Deployment (Production/Testing)
+
+To run the entire application stack in Docker:
+
+```bash
+# Build and start both PostgreSQL and backend
+docker-compose --env-file .env.dev up -d --build
+
+# View logs
+docker-compose logs -f backend
+
+# Stop all services
+docker-compose down
+```
+
+**Use Docker deployment for:**
+- Production environments
+- Testing the full containerized setup
+- CI/CD pipelines
+- Consistent environment across team members
 
 For detailed setup instructions, see [docs/getting-started.md](docs/getting-started.md)
 
+### Database Setup with Docker Compose
+
+The project uses Docker Compose to run PostgreSQL:
+
+- **Configuration**: Database settings are defined in `.env.dev`
+- **Start database only**: `docker-compose --env-file .env.dev up -d postgres`
+- **Start full stack**: `docker-compose --env-file .env.dev up -d`
+- **Stop services**: `docker-compose down`
+- **View logs**: `docker-compose logs -f postgres` or `docker-compose logs -f backend`
+- **Connection details**: Defined by `POSTGRES_USER`, `POSTGRES_PASSWORD`, and `POSTGRES_DB` in `.env.dev`
+
+**Connection strings:**
+- **Local development**: Uses `localhost` as database host (configured in `.env.dev`)
+- **Docker containers**: Uses `postgres` service name as host (docker-compose handles this automatically)
+
+### Docker Files
+
+The project includes the following Docker-related files:
+
+- **Dockerfile**: Multi-stage build for optimized production images (198MB)
+  - Stage 1: Builder - Compiles dependencies with build tools
+  - Stage 2: Runtime - Minimal image with only runtime dependencies
+- **docker-compose.yaml**: Orchestrates PostgreSQL and backend services
+- **.dockerignore**: Excludes unnecessary files from Docker build context
 ## Development Notes
 
 - Database specifications are documented in `table_spec.md`
