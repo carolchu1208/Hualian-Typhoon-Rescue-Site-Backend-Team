@@ -602,6 +602,11 @@ class SupplyItemBase(BaseModel):
     unit: Optional[str] = None
 
 
+class SupplyItemCreateWithPin(SupplyItemBase):
+    supply_id: str
+    edit_pin: Optional[str] = None
+
+
 class SupplyItemCreate(SupplyItemBase):
     supply_id: str
 
@@ -612,6 +617,7 @@ class SupplyItemPatch(BaseModel):
     name: Optional[str] = None
     received_count: Optional[int] = None
     unit: Optional[str] = None
+    edit_pin: Optional[str] = None
 
 
 class SupplyItem(SupplyItemBase):
