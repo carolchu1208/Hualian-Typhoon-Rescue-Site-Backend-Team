@@ -100,6 +100,13 @@ class HumanResourceRoleStatusEnum(enum.Enum):
     pending = "pending"
     partial = "partial"
 
+
+class HumanResourceExperienceLevelEnum(enum.Enum):
+    level_1 = "level_1"
+    level_2 = "level_2"
+    level_3 = "level_3"
+
+
 class SupplyItemTypeEnum(enum.Enum):
     food = "飲食"
     medical_supplies = "醫療用品"
@@ -314,7 +321,7 @@ class HumanResource(Base):
     has_medical = Column(Boolean)
     skills = Column(JSONB)
     certifications = Column(JSONB)
-    experience_level = Column(String)  # Could be an Enum if levels are fixed
+    experience_level = Column(Enum(HumanResourceExperienceLevelEnum))  # Could be an Enum if levels are fixed
     language_requirements = Column(JSONB)
     headcount_unit = Column(String)
     shift_start_ts = Column(BigInteger)

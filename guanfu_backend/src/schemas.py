@@ -6,7 +6,7 @@ from .models import (
     ShelterStatusEnum, MedicalStationTypeEnum, GeneralStatusEnum,
     MentalHealthDurationEnum, MentalHealthFormatEnum, AccommodationVacancyEnum,
     ShowerFacilityTypeEnum, WaterTypeEnum, RestroomFacilityTypeEnum,
-    HumanResourceRoleTypeEnum, HumanResourceRoleStatusEnum
+    HumanResourceRoleTypeEnum, HumanResourceRoleStatusEnum, HumanResourceExperienceLevelEnum
 )
 
 
@@ -519,7 +519,7 @@ class HumanResourceBase(BaseModel):
     has_medical: Optional[bool] = None
     skills: Optional[List[str]] = []
     certifications: Optional[List[str]] = []
-    experience_level: Optional[str] = None
+    experience_level: Optional[HumanResourceExperienceLevelEnum] = None
     language_requirements: Optional[List[str]] = []
     headcount_unit: Optional[str] = None
     shift_start_ts: Optional[int] = None
@@ -549,7 +549,7 @@ class HumanResourcePatch(BaseModel):
     has_medical: Optional[bool] = None
     skills: Optional[List[str]] = None
     certifications: Optional[List[str]] = None
-    experience_level: Optional[str] = None
+    experience_level: Optional[HumanResourceExperienceLevelEnum] = None
     language_requirements: Optional[List[str]] = None
     headcount_unit: Optional[str] = None
     shift_start_ts: Optional[int] = None
@@ -564,7 +564,6 @@ class HumanResource(HumanResourceBase):
     id: str
     created_at: int
     updated_at: int
-    # --- [FIX] Added missing summary/read-only fields ---
     total_roles_in_request: Optional[int] = None
     completed_roles_in_request: Optional[int] = None
     pending_roles_in_request: Optional[int] = None
