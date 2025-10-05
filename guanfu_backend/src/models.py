@@ -331,6 +331,7 @@ class HumanResource(Base):
     assignment_count = Column(Integer)
     assignment_notes = Column(Text)
     pii_date = Column(BigInteger, nullable=False, default=current_timestamp_int)
+    edit_pin = Column(String)
 
 
 class Supply(Base):

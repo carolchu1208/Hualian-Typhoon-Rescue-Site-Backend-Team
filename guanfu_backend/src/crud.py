@@ -38,6 +38,14 @@ def create(db: Session, model: Type[ModelType], obj_in: CreateSchemaType) -> Mod
     return db_obj
 
 
+def create_with_input(db: Session, model: Type[ModelType], obj_in: CreateSchemaType, **kwargs) -> ModelType:
+    db_obj = model(**obj_in.model_dump(mode="json"), **kwargs)
+    db.add(db_obj)
+    db.commit()
+    db.refresh(db_obj)
+    return db_obj
+
+
 def update(db: Session, db_obj: ModelType, obj_in: UpdateSchemaType) -> ModelType:
     update_data = obj_in.model_dump(exclude_unset=True)
     for field in update_data:

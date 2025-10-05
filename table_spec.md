@@ -242,6 +242,7 @@
 | urgent_requests            | number | 否  | 系統緊急人力需求數               | 12 |
 | medical_requests           | number | 否  | 系統醫療人力需求數               | 25 |
 | pii_date                   | number | 是  | 個資同意時間   (Unix Timestamp)   | 1759164503 |
+| edit_pin | string | 是 | 編輯時需確認的6碼pin | 123456 |
 
 
 ### supplies

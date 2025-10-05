@@ -558,6 +558,7 @@ class HumanResourcePatch(BaseModel):
     assignment_timestamp: Optional[int] = None
     assignment_count: Optional[int] = None
     assignment_notes: Optional[str] = None
+    edit_pin: Optional[str] = None
 
 
 class HumanResource(HumanResourceBase):
@@ -579,6 +580,10 @@ class HumanResource(HumanResourceBase):
 
     class Config:
         from_attributes = True
+
+
+class HumanResourceWithPin(HumanResource):
+    edit_pin: Optional[str] = None
 
 
 class HumanResourceCollection(CollectionBase):
