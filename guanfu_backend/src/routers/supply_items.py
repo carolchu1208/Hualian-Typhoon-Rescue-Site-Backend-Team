@@ -33,7 +33,7 @@ def list_supply_items(
 
 @router.post("/", response_model=schemas.SupplyItem, status_code=201, summary="建立特定供應單物資項目")
 def create_supply_item(
-        item_in: schemas.SupplyItemCreate, db: Session = Depends(get_db)
+        item_in: schemas.SupplyItemCreateWithPin, db: Session = Depends(get_db)
 ):
     """
     建立物資項目
@@ -42,7 +42,28 @@ def create_supply_item(
     parent_supply = crud.get_by_id(db, models.Supply, id=item_in.supply_id)
     if not parent_supply:
         raise HTTPException(status_code=400, detail=f"supplies with id {item_in.supply_id} does not exist.")
-    return crud.create(db, models.SupplyItem, obj_in=item_in)
+    if parent_supply.valid_pin and parent_supply.valid_pin != item_in.valid_pin:
+        raise HTTPException(status_code=400, detail="The PIN you entered is incorrect.")
+    # remove unused columns
+    supply_item = item_in.model_dump()
+    del supply_item["valid_pin"]
+    return crud.create(db, models.SupplyItem, obj_in=schemas.SupplyItemCreate(**supply_item))
+
+
+@router.patch("/{id}", response_model=schemas.SupplyItem, status_code=200, summary="更新特定供應單物資項目")
+def patch_supply_item(
+        id: str, item_in: schemas.SupplyItemPatch, db: Session = Depends(get_db)
+):
+    """
+    更新物資項目
+    """
+    # Check if parent supply_id exists
+    db_supply_item = crud.get_by_id(db, models.SupplyItem, id=id)
+    if not db_supply_item:
+        raise HTTPException(status_code=404, detail="Supply Item not found.")
+    if db_supply_item.supply.valid_pin and db_supply_item.supply.valid_pin != item_in.valid_pin:
+        raise HTTPException(status_code=400, detail="The PIN you entered is incorrect.")
+    return crud.update(db, models.SupplyItem, obj_in=item_in)
 
 
 @router.get("/{id}", response_model=schemas.SupplyItem, summary="取得特定物資項目")

@@ -4,6 +4,7 @@ from typing import Optional
 from .. import crud, models, schemas
 from ..database import get_db
 from ..schemas import GeneralStatusEnum, HumanResourceRoleStatusEnum, HumanResourceRoleTypeEnum
+from ..pin_related import generate_pin
 
 router = APIRouter(
     prefix="/human_resources",
@@ -34,14 +35,14 @@ def list_human_resources(
     return {"member": resources, "totalItems": total, "limit": limit, "offset": offset}
 
 
-@router.post("/", response_model=schemas.HumanResource, status_code=201, summary="建立人力需求")
+@router.post("/", response_model=schemas.HumanResourceWithPin, status_code=201, summary="建立人力需求")
 def create_human_resource(
         resource_in: schemas.HumanResourceCreate, db: Session = Depends(get_db)
 ):
     """
     建立人力需求/角色
     """
-    return crud.create(db, models.HumanResource, obj_in=resource_in)
+    return crud.create_with_input(db, models.HumanResource, obj_in=resource_in, valid_pin=generate_pin())
 
 
 @router.get("/{id}", response_model=schemas.HumanResource, summary="取得特定人力需求")
@@ -65,4 +66,6 @@ def patch_human_resource(
     db_resource = crud.get_by_id(db, models.HumanResource, id)
     if db_resource is None:
         raise HTTPException(status_code=404, detail="Human Resource not found")
+    if db_resource.valid_pin and db_resource.valid_pin != resource_in.valid_pin:
+        raise HTTPException(status_code=400, detail="The PIN you entered is incorrect.")
     return crud.update(db, db_obj=db_resource, obj_in=resource_in)

@@ -31,7 +31,7 @@ def list_supplies(
     return {"member": supplies, "totalItems": total, "limit": limit, "offset": offset}
 
 
-@router.post("/", response_model=schemas.Supply, status_code=201, summary="建立供應單")
+@router.post("/", response_model=schemas.SupplyWithPin, status_code=201, summary="建立供應單")
 def create_supply(
         supply_in: schemas.SupplyCreate, db: Session = Depends(get_db)
 ):
@@ -40,6 +40,21 @@ def create_supply(
     """
     # This requires custom logic in crud.py to handle the nested `supplies` object
     return crud.create_supply_with_items(db, obj_in=supply_in)
+
+
+@router.patch("/{id}", response_model=schemas.Supply, status_code=200, summary="更新供應單")
+def patch_supply(
+        id: str, supply_in: schemas.SupplyPatch, db: Session = Depends(get_db)
+):
+    """
+    更新供應單
+    """
+    db_supply = crud.get_by_id(db, models.Supply, id)
+    if db_supply is None:
+        raise HTTPException(status_code=404, detail="Supply not found")
+    if db_supply.valid_pin and db_supply.valid_pin != supply_in.valid_pin:
+        raise HTTPException(status_code=400, detail="The PIN you entered is incorrect.")
+    return crud.update(db, db_obj=db_supply, obj_in=supply_in)
 
 
 @router.get("/{id}", response_model=schemas.Supply, summary="取得特定供應單")

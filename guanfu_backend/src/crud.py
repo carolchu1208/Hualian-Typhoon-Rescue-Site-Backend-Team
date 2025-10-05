@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from . import models
 from .schemas import SupplyCreate, SupplyItemDistribution
+from .pin_related import generate_pin
 
 ModelType = TypeVar("ModelType", bound=models.Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
@@ -38,6 +39,14 @@ def create(db: Session, model: Type[ModelType], obj_in: CreateSchemaType) -> Mod
     return db_obj
 
 
+def create_with_input(db: Session, model: Type[ModelType], obj_in: CreateSchemaType, **kwargs) -> ModelType:
+    db_obj = model(**obj_in.model_dump(mode="json"), **kwargs)
+    db.add(db_obj)
+    db.commit()
+    db.refresh(db_obj)
+    return db_obj
+
+
 def update(db: Session, db_obj: ModelType, obj_in: UpdateSchemaType) -> ModelType:
     update_data = obj_in.model_dump(exclude_unset=True)
     for field in update_data:
@@ -62,7 +71,7 @@ def create_supply_with_items(db: Session, obj_in: SupplyCreate) -> models.Supply
     nested_item_data = obj_in.supplies
 
     # 2. 建立主體 Supply 物件的實例
-    db_supply = models.Supply(**supply_data)
+    db_supply = models.Supply(**supply_data, valid_pin=generate_pin())
     db.add(db_supply)
 
     # 3. 檢查是否有提供第一個物資項目的資料
