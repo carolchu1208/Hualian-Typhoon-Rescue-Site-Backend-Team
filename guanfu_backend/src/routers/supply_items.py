@@ -42,11 +42,11 @@ def create_supply_item(
     parent_supply = crud.get_by_id(db, models.Supply, id=item_in.supply_id)
     if not parent_supply:
         raise HTTPException(status_code=400, detail=f"supplies with id {item_in.supply_id} does not exist.")
-    if parent_supply.edit_pin and parent_supply.edit_pin != item_in.edit_pin:
+    if parent_supply.valid_pin and parent_supply.valid_pin != item_in.valid_pin:
         raise HTTPException(status_code=400, detail="The PIN you entered is incorrect.")
     # remove unused columns
     supply_item = item_in.model_dump()
-    del supply_item["edit_pin"]
+    del supply_item["valid_pin"]
     return crud.create(db, models.SupplyItem, obj_in=schemas.SupplyItemCreate(**supply_item))
 
 
@@ -61,7 +61,7 @@ def patch_supply_item(
     db_supply_item = crud.get_by_id(db, models.SupplyItem, id=id)
     if not db_supply_item:
         raise HTTPException(status_code=404, detail="Supply Item not found.")
-    if db_supply_item.supply.edit_pin and db_supply_item.supply.edit_pin != item_in.edit_pin:
+    if db_supply_item.supply.valid_pin and db_supply_item.supply.valid_pin != item_in.valid_pin:
         raise HTTPException(status_code=400, detail="The PIN you entered is incorrect.")
     return crud.update(db, models.SupplyItem, obj_in=item_in)
 

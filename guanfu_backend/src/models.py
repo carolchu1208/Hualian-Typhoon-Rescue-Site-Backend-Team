@@ -331,7 +331,7 @@ class HumanResource(Base):
     assignment_count = Column(Integer)
     assignment_notes = Column(Text)
     pii_date = Column(BigInteger, nullable=False, default=current_timestamp_int)
-    edit_pin = Column(String)
+    valid_pin = Column(String)
 
 
 class Supply(Base):
@@ -345,7 +345,7 @@ class Supply(Base):
     notes = Column(Text)
     supplies = relationship("SupplyItem", back_populates="supply", cascade="all, delete-orphan")
     pii_date = Column(BigInteger, nullable=False, default=current_timestamp_int)
-    edit_pin = Column(String)
+    valid_pin = Column(String)
 
 
 class SupplyItem(Base):

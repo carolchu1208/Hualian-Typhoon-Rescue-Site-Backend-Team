@@ -52,7 +52,7 @@ def patch_supply(
     db_supply = crud.get_by_id(db, models.Supply, id)
     if db_supply is None:
         raise HTTPException(status_code=404, detail="Supply not found")
-    if db_supply.edit_pin and db_supply.edit_pin != supply_in.edit_pin:
+    if db_supply.valid_pin and db_supply.valid_pin != supply_in.valid_pin:
         raise HTTPException(status_code=400, detail="The PIN you entered is incorrect.")
     return crud.update(db, db_obj=db_supply, obj_in=supply_in)
 

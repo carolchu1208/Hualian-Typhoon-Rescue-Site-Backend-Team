@@ -71,7 +71,7 @@ def create_supply_with_items(db: Session, obj_in: SupplyCreate) -> models.Supply
     nested_item_data = obj_in.supplies
 
     # 2. 建立主體 Supply 物件的實例
-    db_supply = models.Supply(**supply_data, edit_pin=generate_pin())
+    db_supply = models.Supply(**supply_data, valid_pin=generate_pin())
     db.add(db_supply)
 
     # 3. 檢查是否有提供第一個物資項目的資料

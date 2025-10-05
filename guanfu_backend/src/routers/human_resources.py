@@ -42,7 +42,7 @@ def create_human_resource(
     """
     建立人力需求/角色
     """
-    return crud.create_with_input(db, models.HumanResource, obj_in=resource_in, edit_pin=generate_pin())
+    return crud.create_with_input(db, models.HumanResource, obj_in=resource_in, valid_pin=generate_pin())
 
 
 @router.get("/{id}", response_model=schemas.HumanResource, summary="取得特定人力需求")
@@ -66,6 +66,6 @@ def patch_human_resource(
     db_resource = crud.get_by_id(db, models.HumanResource, id)
     if db_resource is None:
         raise HTTPException(status_code=404, detail="Human Resource not found")
-    if db_resource.edit_pin and db_resource.edit_pin != resource_in.edit_pin:
+    if db_resource.valid_pin and db_resource.valid_pin != resource_in.valid_pin:
         raise HTTPException(status_code=400, detail="The PIN you entered is incorrect.")
     return crud.update(db, db_obj=db_resource, obj_in=resource_in)

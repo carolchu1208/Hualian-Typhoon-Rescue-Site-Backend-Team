@@ -558,7 +558,7 @@ class HumanResourcePatch(BaseModel):
     assignment_timestamp: Optional[int] = None
     assignment_count: Optional[int] = None
     assignment_notes: Optional[str] = None
-    edit_pin: Optional[str] = None
+    valid_pin: Optional[str] = None
 
 
 class HumanResource(HumanResourceBase):
@@ -583,7 +583,7 @@ class HumanResource(HumanResourceBase):
 
 
 class HumanResourceWithPin(HumanResource):
-    edit_pin: Optional[str] = None
+    valid_pin: Optional[str] = None
 
 
 class HumanResourceCollection(CollectionBase):
@@ -604,7 +604,7 @@ class SupplyItemBase(BaseModel):
 
 class SupplyItemCreateWithPin(SupplyItemBase):
     supply_id: str
-    edit_pin: Optional[str] = None
+    valid_pin: Optional[str] = None
 
 
 class SupplyItemCreate(SupplyItemBase):
@@ -617,7 +617,7 @@ class SupplyItemPatch(BaseModel):
     name: Optional[str] = None
     received_count: Optional[int] = None
     unit: Optional[str] = None
-    edit_pin: Optional[str] = None
+    valid_pin: Optional[str] = None
 
 
 class SupplyItem(SupplyItemBase):
@@ -648,7 +648,7 @@ class SupplyPatch(BaseModel):
     address: Optional[str] = None
     phone: Optional[str] = None
     notes: Optional[str] = None
-    edit_pin: Optional[str] = None
+    valid_pin: Optional[str] = None
 
 
 class Supply(SupplyBase):
@@ -662,7 +662,7 @@ class Supply(SupplyBase):
 
 
 class SupplyWithPin(Supply):
-    edit_pin: Optional[str] = None
+    valid_pin: Optional[str] = None
 
 
 class SupplyCollection(CollectionBase):
