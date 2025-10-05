@@ -17,6 +17,10 @@ class Settings(BaseSettings):
     ENVIRONMENT: str
     APP_TITLE: str
     DATABASE_URL: str
+    DB_USER: str
+    DB_PASS: str
+    DB_NAME: str
+    INSTANCE_CONNECTION_NAME: str
 
     # PROD_SERVER_URL 可以有預設值，因為它不是敏感資訊
     PROD_SERVER_URL: str = "https://guangfu250923.pttapp.cc"
