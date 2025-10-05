@@ -345,6 +345,7 @@ class Supply(Base):
     notes = Column(Text)
     supplies = relationship("SupplyItem", back_populates="supply", cascade="all, delete-orphan")
     pii_date = Column(BigInteger, nullable=False, default=current_timestamp_int)
+    edit_pin = Column(String)
 
 
 class SupplyItem(Base):

@@ -642,6 +642,7 @@ class SupplyPatch(BaseModel):
     address: Optional[str] = None
     phone: Optional[str] = None
     notes: Optional[str] = None
+    edit_pin: Optional[str] = None
 
 
 class Supply(SupplyBase):
@@ -652,6 +653,10 @@ class Supply(SupplyBase):
 
     class Config:
         from_attributes = True
+
+
+class SupplyWithPin(Supply):
+    edit_pin: Optional[str] = None
 
 
 class SupplyCollection(CollectionBase):

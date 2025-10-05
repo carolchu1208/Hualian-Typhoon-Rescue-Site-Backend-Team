@@ -257,6 +257,7 @@
 | created_at | number | 是 | 建立時間（Unix timestamp） | 1727664000 |
 | updated_at | number | 是 | 更新時間（Unix timestamp） | 1727750400 |
 | pii_date                   | number | 是  | 個資同意時間   (Unix Timestamp)   | 1759164503 |
+| edit_pin | string | 是 | 編輯時需確認的6碼pin | 123456 |
 
 
 ### supply_items 
