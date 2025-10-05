@@ -3,18 +3,19 @@ from sqlalchemy.orm import Session
 from typing import Optional
 from .. import crud, models, schemas
 from ..database import get_db
+from ..schemas import GeneralStatusEnum, MedicalStationTypeEnum
 
 router = APIRouter(
     prefix="/medical_stations",
-    tags=["Medical Stations"],
+    tags=["醫療站（Medical Stations）"],
     responses={404: {"description": "Not found"}},
 )
 
 
-@router.get("/", response_model=schemas.MedicalStationCollection)
+@router.get("/", response_model=schemas.MedicalStationCollection, summary="取得醫療站清單")
 def list_medical_stations(
-        status: Optional[str] = Query(None),
-        station_type: Optional[str] = Query(None),
+        status: Optional[GeneralStatusEnum] = Query(None),
+        station_type: Optional[MedicalStationTypeEnum] = Query(None),
         limit: int = Query(50, ge=1, le=500),
         offset: int = Query(0, ge=0),
         db: Session = Depends(get_db)
@@ -28,7 +29,7 @@ def list_medical_stations(
     return {"member": stations, "totalItems": total, "limit": limit, "offset": offset}
 
 
-@router.post("/", response_model=schemas.MedicalStation, status_code=201)
+@router.post("/", response_model=schemas.MedicalStation, status_code=201, summary="建立醫療站")
 def create_medical_station(
         station_in: schemas.MedicalStationCreate, db: Session = Depends(get_db)
 ):
@@ -38,7 +39,7 @@ def create_medical_station(
     return crud.create(db, models.MedicalStation, obj_in=station_in)
 
 
-@router.get("/{id}", response_model=schemas.MedicalStation)
+@router.get("/{id}", response_model=schemas.MedicalStation, summary="取得特定醫療站")
 def get_medical_station(id: str, db: Session = Depends(get_db)):
     """
     取得單一醫療站
@@ -49,7 +50,7 @@ def get_medical_station(id: str, db: Session = Depends(get_db)):
     return db_station
 
 
-@router.patch("/{id}", response_model=schemas.MedicalStation)
+@router.patch("/{id}", response_model=schemas.MedicalStation, summary="更新特定醫療站")
 def patch_medical_station(
         id: str, station_in: schemas.MedicalStationPatch, db: Session = Depends(get_db)
 ):

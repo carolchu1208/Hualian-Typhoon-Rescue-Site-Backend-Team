@@ -85,10 +85,13 @@ class RestroomFacilityTypeEnum(enum.Enum):
 
 class HumanResourceRoleTypeEnum(enum.Enum):
     general_volunteer = "一般志工"
-    medical_staff = "醫療人員"
+    medical_staff = "醫療照護"
+    logistics = "後勤支援"
+    cleaning = "清潔整理"
     admin_support = "行政支援"
     driver = "司機"
     security = "安全維護"
+    professional = "專業技術"
     other = "其他"
 
 
@@ -96,6 +99,15 @@ class HumanResourceRoleStatusEnum(enum.Enum):
     completed = "completed"
     pending = "pending"
     partial = "partial"
+
+class SupplyItemTypeEnum(enum.Enum):
+    food = "飲食"
+    medical_supplies = "醫療用品"
+    groceries = "生活用品"
+    machinery = "大型機具"
+    equipment = "動物醫療"
+    plumber = "水電"
+    other = "其他"
 
 
 # ===================================================================
@@ -311,6 +323,7 @@ class HumanResource(Base):
     assignment_timestamp = Column(BigInteger)
     assignment_count = Column(Integer)
     assignment_notes = Column(Text)
+    pii_date = Column(BigInteger, nullable=False, default=current_timestamp_int)
 
 
 class Supply(Base):
@@ -322,7 +335,8 @@ class Supply(Base):
     address = Column(String)
     phone = Column(String)
     notes = Column(Text)
-    supply_items = relationship("SupplyItem", back_populates="supply", cascade="all, delete-orphan")
+    supplies = relationship("SupplyItem", back_populates="supply", cascade="all, delete-orphan")
+    pii_date = Column(BigInteger, nullable=False, default=current_timestamp_int)
 
 
 class SupplyItem(Base):
@@ -330,11 +344,11 @@ class SupplyItem(Base):
     id = Column(String, primary_key=True, default=generate_uuid_str)
     supply_id = Column(String, ForeignKey("supplies.id"), nullable=False)
     total_number = Column(Integer, nullable=False)
-    tag = Column(String)
+    tag = Column(Enum(SupplyItemTypeEnum), nullable=False)
     name = Column(String)
     received_count = Column(Integer)
     unit = Column(String)
-    supply = relationship("Supply", back_populates="supply_items")
+    supply = relationship("Supply", back_populates="supplies")
 
 
 class Report(Base):
@@ -347,4 +361,4 @@ class Report(Base):
     location_type = Column(String, nullable=False)
     reason = Column(Text, nullable=False)
     notes = Column(Text)
-    status = Column(String, nullable=False)
+    status = Column(Boolean, nullable=False)

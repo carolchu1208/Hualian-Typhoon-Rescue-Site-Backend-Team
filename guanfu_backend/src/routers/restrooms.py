@@ -3,18 +3,19 @@ from sqlalchemy.orm import Session
 from typing import Optional
 from .. import crud, models, schemas
 from ..database import get_db
+from ..schemas import GeneralStatusEnum, RestroomFacilityTypeEnum
 
 router = APIRouter(
     prefix="/restrooms",
-    tags=["Restrooms"],
+    tags=["廁所點（Restrooms）"],
     responses={404: {"description": "Not found"}},
 )
 
 
-@router.get("/", response_model=schemas.RestroomCollection)
+@router.get("/", response_model=schemas.RestroomCollection, summary="取得廁所點清單")
 def list_restrooms(
-        status: Optional[str] = Query(None),
-        facility_type: Optional[str] = Query(None),
+        status: Optional[GeneralStatusEnum] = Query(None),
+        facility_type: Optional[RestroomFacilityTypeEnum] = Query(None),
         is_free: Optional[bool] = Query(None),
         has_water: Optional[bool] = Query(None),
         has_lighting: Optional[bool] = Query(None),
@@ -37,7 +38,7 @@ def list_restrooms(
     return {"member": restrooms, "totalItems": total, "limit": limit, "offset": offset}
 
 
-@router.post("/", response_model=schemas.Restroom, status_code=201)
+@router.post("/", response_model=schemas.Restroom, status_code=201, summary="建立廁所點")
 def create_restroom(
         restroom_in: schemas.RestroomCreate, db: Session = Depends(get_db)
 ):
@@ -47,7 +48,7 @@ def create_restroom(
     return crud.create(db, models.Restroom, obj_in=restroom_in)
 
 
-@router.get("/{id}", response_model=schemas.Restroom)
+@router.get("/{id}", response_model=schemas.Restroom, summary="取得特定廁所點")
 def get_restroom(id: str, db: Session = Depends(get_db)):
     """
     取得單一廁所點
@@ -58,7 +59,7 @@ def get_restroom(id: str, db: Session = Depends(get_db)):
     return db_restroom
 
 
-@router.patch("/{id}", response_model=schemas.Restroom)
+@router.patch("/{id}", response_model=schemas.Restroom, summary="更新特定廁所點")
 def patch_restroom(
         id: str, restroom_in: schemas.RestroomPatch, db: Session = Depends(get_db)
 ):
