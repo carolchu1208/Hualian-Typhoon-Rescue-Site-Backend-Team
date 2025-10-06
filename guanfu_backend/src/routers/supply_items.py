@@ -44,6 +44,8 @@ def create_supply_item(
         raise HTTPException(status_code=400, detail=f"supplies with id {item_in.supply_id} does not exist.")
     if parent_supply.valid_pin and parent_supply.valid_pin != item_in.valid_pin:
         raise HTTPException(status_code=400, detail="The PIN you entered is incorrect.")
+    if item_in.received_count > item_in.total_number:
+        raise HTTPException(status_code=400, detail="Received_count must be less than or equal to total_number.")
     # remove unused columns
     supply_item = item_in.model_dump()
     del supply_item["valid_pin"]
@@ -63,6 +65,14 @@ def patch_supply_item(
         raise HTTPException(status_code=404, detail="Supply Item not found.")
     if db_supply_item.supply.valid_pin and db_supply_item.supply.valid_pin != item_in.valid_pin:
         raise HTTPException(status_code=400, detail="The PIN you entered is incorrect.")
+    # validate num
+    if item_in.total_number is not None or item_in.received_count is not None:
+        if db_supply_item.total_number == db_supply_item.received_count:
+            raise HTTPException(status_code=400, detail="Received_count and total_number are locked because their values are equal; updates are not allowed.")
+        total_number = item_in.total_number if item_in.total_number is not None else db_supply_item.total_number
+        received_count = item_in.received_count if item_in.received_count is not None else db_supply_item.received_count
+        if received_count > total_number:
+            raise HTTPException(status_code=400, detail="Received_count must be less than or equal to total_number.")
     return crud.update(db, models.SupplyItem, obj_in=item_in)
 
 
