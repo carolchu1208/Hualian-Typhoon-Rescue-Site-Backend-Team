@@ -1,6 +1,7 @@
 """確認數量邏輯"""
 from typing import Optional, List, Dict, Any
 from fastapi.exceptions import RequestValidationError
+from fastapi import HTTPException
 
 
 def validate_mixed(
@@ -19,6 +20,12 @@ def validate_mixed(
     """
     errors: List[Dict[str, Any]] = []
     loc_when_input, loc_when_db = ("body",), ("db",)
+
+    # check db value
+    if need_db and got_db and need_db == got_db:
+        if need_input is not None or got_input is not None:
+            raise HTTPException(status_code=400,
+                                detail=f"{field_got} and {field_need} are locked because their values are equal; updates are not allowed.")
 
     # 有效值（input 優先，否則 fallback 到 DB）
     need_eff = need_input if need_input is not None else need_db
