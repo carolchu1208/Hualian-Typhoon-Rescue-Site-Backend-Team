@@ -1,22 +1,19 @@
-from pydantic import BaseModel, Field, NonNegativeInt
-from typing import List, Optional, Any
+from pydantic import BaseModel, constr, Field, NonNegativeInt
+from typing import List, Optional, Annotated, Any
 import datetime
-
-from .models import (
-    ShelterStatusEnum, MedicalStationTypeEnum, GeneralStatusEnum,
-    MentalHealthDurationEnum, MentalHealthFormatEnum, AccommodationVacancyEnum,
-    ShowerFacilityTypeEnum, WaterTypeEnum, RestroomFacilityTypeEnum,
-    HumanResourceRoleTypeEnum, HumanResourceRoleStatusEnum, HumanResourceExperienceLevelEnum
-)
+from .enum_serializer import *
 
 
 # ===================================================================
 # 通用基礎模型 (Common Base Models)
 # ===================================================================
+class BaseColumn(BaseModel):
+    id: str
+
 
 class Coordinates(BaseModel):
-    lat: Optional[float] = None
-    lng: Optional[float] = None
+    lat: float
+    lng: float
 
 
 class CollectionBase(BaseModel):
@@ -40,7 +37,7 @@ class VolunteerOrgBase(BaseModel):
     service_content: Optional[str] = None
     meeting_info: Optional[str] = None
     notes: Optional[str] = None
-    image_url: Optional[str] = None
+    image_url: Optional[str] = None # Todo:需要協助補上驗證規則
 
 
 class VolunteerOrgCreate(VolunteerOrgBase):
@@ -57,10 +54,10 @@ class VolunteerOrgPatch(BaseModel):
     service_content: Optional[str] = None
     meeting_info: Optional[str] = None
     notes: Optional[str] = None
-    image_url: Optional[str] = None
+    image_url: Optional[str] = None # Todo:需要協助補上驗證規則
 
 
-class VolunteerOrganization(VolunteerOrgBase):
+class VolunteerOrganization(VolunteerOrgBase, BaseColumn):
     id: str
     last_updated: Optional[datetime.datetime] = None
 
@@ -80,7 +77,7 @@ class ShelterBase(BaseModel):
     name: str
     location: str
     phone: str
-    status: ShelterStatusEnum
+    status: str
     link: Optional[str] = None
     capacity: Optional[int] = None
     current_occupancy: Optional[int] = None
@@ -91,16 +88,16 @@ class ShelterBase(BaseModel):
     coordinates: Optional[Coordinates] = None
     opening_hours: Optional[str] = None
 
-
+# Todo:需要協助補上驗證規則 like link
 class ShelterCreate(ShelterBase):
-    pass
+    status: ShelterStatusEnum
 
 
 class ShelterPatch(BaseModel):
     name: Optional[str] = None
     location: Optional[str] = None
     phone: Optional[str] = None
-    status: Optional[ShelterStatusEnum] = None
+    status: ShelterStatusEnum
     link: Optional[str] = None
     capacity: Optional[int] = None
     current_occupancy: Optional[int] = None
@@ -112,11 +109,7 @@ class ShelterPatch(BaseModel):
     opening_hours: Optional[str] = None
 
 
-class Shelter(ShelterBase):
-    id: str
-    created_at: int
-    updated_at: int
-
+class Shelter(ShelterBase, BaseColumn):
     class Config:
         from_attributes = True
 
@@ -132,7 +125,7 @@ class ShelterCollection(CollectionBase):
 class MedicalStationBase(BaseModel):
     station_type: MedicalStationTypeEnum
     name: str
-    status: GeneralStatusEnum
+    status: str
     location: Optional[str] = None
     detailed_address: Optional[str] = None
     phone: Optional[str] = None
@@ -147,15 +140,15 @@ class MedicalStationBase(BaseModel):
     notes: Optional[str] = None
     link: Optional[str] = None
 
-
+# Todo:需要協助補上驗證規則 like phone and link
 class MedicalStationCreate(MedicalStationBase):
-    pass
+    str: MedicalStationStatusEnum
 
 
 class MedicalStationPatch(BaseModel):
     station_type: Optional[MedicalStationTypeEnum] = None
     name: Optional[str] = None
-    status: Optional[GeneralStatusEnum] = None
+    status: Optional[MedicalStationStatusEnum] = None
     location: Optional[str] = None
     detailed_address: Optional[str] = None
     phone: Optional[str] = None
@@ -171,11 +164,7 @@ class MedicalStationPatch(BaseModel):
     link: Optional[str] = None
 
 
-class MedicalStation(MedicalStationBase):
-    id: str
-    created_at: int
-    updated_at: int
-
+class MedicalStation(MedicalStationBase, BaseColumn):
     class Config:
         from_attributes = True
 
@@ -189,13 +178,13 @@ class MedicalStationCollection(CollectionBase):
 # ===================================================================
 
 class MentalHealthResourceBase(BaseModel):
-    duration_type: MentalHealthDurationEnum
+    duration_type: str
     name: str
-    service_format: MentalHealthFormatEnum
+    service_format: str
     service_hours: str
     contact_info: str
     is_free: bool
-    status: GeneralStatusEnum
+    status: str
     emergency_support: bool
     website_url: Optional[str] = None
     target_audience: Optional[List[str]] = []
@@ -209,7 +198,9 @@ class MentalHealthResourceBase(BaseModel):
 
 
 class MentalHealthResourceCreate(MentalHealthResourceBase):
-    pass
+    duration_type: MentalHealthDurationEnum
+    service_format: MentalHealthFormatEnum
+    status: MentalHealthResourceStatusEnum
 
 
 class MentalHealthResourcePatch(BaseModel):
@@ -219,7 +210,7 @@ class MentalHealthResourcePatch(BaseModel):
     service_hours: Optional[str] = None
     contact_info: Optional[str] = None
     is_free: Optional[bool] = None
-    status: Optional[GeneralStatusEnum] = None
+    status: Optional[MentalHealthResourceStatusEnum] = None
     emergency_support: Optional[bool] = None
     website_url: Optional[str] = None
     target_audience: Optional[List[str]] = None
@@ -232,11 +223,7 @@ class MentalHealthResourcePatch(BaseModel):
     notes: Optional[str] = None
 
 
-class MentalHealthResource(MentalHealthResourceBase):
-    id: str
-    created_at: int
-    updated_at: int
-
+class MentalHealthResource(MentalHealthResourceBase, BaseColumn):
     class Config:
         from_attributes = True
 
@@ -252,12 +239,12 @@ class MentalHealthResourceCollection(CollectionBase):
 class AccommodationBase(BaseModel):
     township: str
     name: str
-    has_vacancy: AccommodationVacancyEnum
+    has_vacancy: str
     available_period: str
     contact_info: str
     address: str
     pricing: str
-    status: GeneralStatusEnum
+    status: str
     restrictions: Optional[str] = None
     room_info: Optional[str] = None
     coordinates: Optional[Coordinates] = None
@@ -270,7 +257,8 @@ class AccommodationBase(BaseModel):
 
 
 class AccommodationCreate(AccommodationBase):
-    pass
+    status: AccommodationStatusEnum
+    has_vacancy: AccommodationVacancyEnum
 
 
 class AccommodationPatch(BaseModel):
@@ -281,7 +269,7 @@ class AccommodationPatch(BaseModel):
     contact_info: Optional[str] = None
     address: Optional[str] = None
     pricing: Optional[str] = None
-    status: Optional[GeneralStatusEnum] = None
+    status: AccommodationStatusEnum
     restrictions: Optional[str] = None
     room_info: Optional[str] = None
     coordinates: Optional[Coordinates] = None
@@ -293,11 +281,7 @@ class AccommodationPatch(BaseModel):
     distance_to_disaster_area: Optional[str] = None
 
 
-class Accommodation(AccommodationBase):
-    id: str
-    created_at: int
-    updated_at: int
-
+class Accommodation(AccommodationBase, BaseColumn):
     class Config:
         from_attributes = True
 
@@ -314,15 +298,15 @@ class GenderSchedule(BaseModel):
     male: Optional[List[str]] = []
     female: Optional[List[str]] = []
 
-
+# Todo:需要協助補上驗證規則 like phone
 class ShowerStationBase(BaseModel):
     name: str
     address: str
-    facility_type: ShowerFacilityTypeEnum
+    facility_type: str
     time_slots: str
     available_period: str
     is_free: bool
-    status: GeneralStatusEnum
+    status: str
     requires_appointment: bool
     coordinates: Optional[Coordinates] = None
     phone: Optional[str] = None
@@ -337,7 +321,8 @@ class ShowerStationBase(BaseModel):
 
 
 class ShowerStationCreate(ShowerStationBase):
-    pass
+    facility_type: ShowerFacilityTypeEnum
+    status: ShowerStationStatusEnum
 
 
 class ShowerStationPatch(BaseModel):
@@ -347,7 +332,7 @@ class ShowerStationPatch(BaseModel):
     time_slots: Optional[str] = None
     available_period: Optional[str] = None
     is_free: Optional[bool] = None
-    status: Optional[GeneralStatusEnum] = None
+    status: Optional[ShowerStationStatusEnum] = None
     requires_appointment: Optional[bool] = None
     coordinates: Optional[Coordinates] = None
     phone: Optional[str] = None
@@ -361,11 +346,7 @@ class ShowerStationPatch(BaseModel):
     contact_method: Optional[str] = None
 
 
-class ShowerStation(ShowerStationBase):
-    id: str
-    created_at: int
-    updated_at: int
-
+class ShowerStation(ShowerStationBase, BaseColumn):
     class Config:
         from_attributes = True
 
@@ -384,7 +365,7 @@ class WaterRefillStationBase(BaseModel):
     water_type: WaterTypeEnum
     opening_hours: str
     is_free: bool
-    status: GeneralStatusEnum
+    status: WaterRefillStationStatusEnum
     accessibility: bool
     coordinates: Optional[Coordinates] = None
     phone: Optional[str] = None
@@ -396,9 +377,10 @@ class WaterRefillStationBase(BaseModel):
     notes: Optional[str] = None
     info_source: Optional[str] = None
 
-
+# Todo:需要協助補上驗證規則 like phone
 class WaterRefillStationCreate(WaterRefillStationBase):
-    pass
+    water_type: WaterTypeEnum
+    status: WaterRefillStationStatusEnum
 
 
 class WaterRefillStationPatch(BaseModel):
@@ -407,7 +389,7 @@ class WaterRefillStationPatch(BaseModel):
     water_type: Optional[WaterTypeEnum] = None
     opening_hours: Optional[str] = None
     is_free: Optional[bool] = None
-    status: Optional[GeneralStatusEnum] = None
+    status: Optional[WaterRefillStationStatusEnum] = None
     accessibility: Optional[bool] = None
     coordinates: Optional[Coordinates] = None
     phone: Optional[str] = None
@@ -420,11 +402,7 @@ class WaterRefillStationPatch(BaseModel):
     info_source: Optional[str] = None
 
 
-class WaterRefillStation(WaterRefillStationBase):
-    id: str
-    created_at: int
-    updated_at: int
-
+class WaterRefillStation(WaterRefillStationBase, BaseColumn):
     class Config:
         from_attributes = True
 
@@ -440,12 +418,12 @@ class WaterRefillStationCollection(CollectionBase):
 class RestroomBase(BaseModel):
     name: str
     address: str
-    facility_type: RestroomFacilityTypeEnum
+    facility_type: str
     opening_hours: str
     is_free: bool
     has_water: bool
     has_lighting: bool
-    status: GeneralStatusEnum
+    status: str
     coordinates: Optional[Coordinates] = None
     phone: Optional[str] = None
     male_units: Optional[int] = None
@@ -459,9 +437,10 @@ class RestroomBase(BaseModel):
     notes: Optional[str] = None
     info_source: Optional[str] = None
 
-
+# Todo:需要協助補上驗證規則 like phone and cleanliness
 class RestroomCreate(RestroomBase):
-    pass
+    facility_type: RestroomFacilityTypeEnum
+    status: RestroomStatusEnum
 
 
 class RestroomPatch(BaseModel):
@@ -472,7 +451,7 @@ class RestroomPatch(BaseModel):
     is_free: Optional[bool] = None
     has_water: Optional[bool] = None
     has_lighting: Optional[bool] = None
-    status: Optional[GeneralStatusEnum] = None
+    status: Optional[RestroomStatusEnum] = None
     coordinates: Optional[Coordinates] = None
     phone: Optional[str] = None
     male_units: Optional[int] = None
@@ -487,11 +466,7 @@ class RestroomPatch(BaseModel):
     info_source: Optional[str] = None
 
 
-class Restroom(RestroomBase):
-    id: str
-    created_at: int
-    updated_at: int
-
+class Restroom(RestroomBase, BaseColumn):
     class Config:
         from_attributes = True
 
@@ -504,22 +479,22 @@ class RestroomCollection(CollectionBase):
 # 人力資源 (Human Resources)
 # ===================================================================
 
+
 class HumanResourceBase(BaseModel):
     org: str
     address: str
     phone: str
-    status: GeneralStatusEnum
+    status: str
     is_completed: bool
     role_name: str
-    role_type: HumanResourceRoleTypeEnum
+    role_type: str
     headcount_need: NonNegativeInt
     headcount_got: NonNegativeInt
-    role_status: HumanResourceRoleStatusEnum
-    pii_date: int
+    role_status: str
     has_medical: Optional[bool] = None
     skills: Optional[List[str]] = []
     certifications: Optional[List[str]] = []
-    experience_level: Optional[HumanResourceExperienceLevelEnum] = None
+    experience_level: Optional[str] = None
     language_requirements: Optional[List[str]] = []
     headcount_unit: Optional[str] = None
     shift_start_ts: Optional[int] = None
@@ -529,16 +504,19 @@ class HumanResourceBase(BaseModel):
     assignment_count: Optional[int] = None
     assignment_notes: Optional[str] = None
 
-
+# Todo:需要協助補上驗證規則 like phone
 class HumanResourceCreate(HumanResourceBase):
-    pass
+    status: HumanResourceStatusEnum
+    role_type: HumanResourceRoleTypeEnum
+    role_status: HumanResourceRoleStatusEnum
+    experience_level: Optional[HumanResourceExperienceLevelEnum] = None
 
 
 class HumanResourcePatch(BaseModel):
     org: Optional[str] = None
     address: Optional[str] = None
     phone: Optional[str] = None
-    status: Optional[GeneralStatusEnum] = None
+    status: Optional[HumanResourceStatusEnum] = None
     is_completed: Optional[bool] = None
     role_name: Optional[str] = None
     role_type: Optional[HumanResourceRoleTypeEnum] = None
@@ -561,10 +539,7 @@ class HumanResourcePatch(BaseModel):
     valid_pin: Optional[str] = None
 
 
-class HumanResource(HumanResourceBase):
-    id: str
-    created_at: int
-    updated_at: int
+class HumanResource(HumanResourceBase, BaseColumn):
     total_roles_in_request: Optional[int] = None
     completed_roles_in_request: Optional[int] = None
     pending_roles_in_request: Optional[int] = None
@@ -604,7 +579,6 @@ class SupplyItemBase(BaseModel):
 
 class SupplyItemCreateWithPin(SupplyItemBase):
     supply_id: str
-    valid_pin: Optional[str] = None
 
 
 class SupplyItemCreate(SupplyItemBase):
@@ -620,8 +594,7 @@ class SupplyItemPatch(BaseModel):
     valid_pin: Optional[str] = None
 
 
-class SupplyItem(SupplyItemBase):
-    id: str
+class SupplyItem(SupplyItemBase, BaseColumn):
     supply_id: str
 
     class Config:
@@ -651,10 +624,7 @@ class SupplyPatch(BaseModel):
     valid_pin: Optional[str] = None
 
 
-class Supply(SupplyBase):
-    id: str
-    created_at: int
-    updated_at: int
+class Supply(SupplyBase, BaseColumn):
     supplies: List[SupplyItem] = []
 
     class Config:
@@ -669,9 +639,12 @@ class SupplyCollection(CollectionBase):
     member: List[Supply]
 
 
+SixDigitPin = Annotated[str, constr(pattern=r'^\d{6}$')]
+
+
 class SupplyItemDistribution(BaseModel):
     id: str
-    count: int = Field(..., gt=0, description="本次配送新增的數量，必須是正整數")
+    valid_pin: SixDigitPin
 
 
 # ===================================================================
@@ -700,11 +673,7 @@ class ReportPatch(BaseModel):
     notes: Optional[str] = None
 
 
-class Report(ReportBase):
-    id: str
-    created_at: int
-    updated_at: int
-
+class Report(ReportBase, BaseColumn):
     class Config:
         from_attributes = True
 

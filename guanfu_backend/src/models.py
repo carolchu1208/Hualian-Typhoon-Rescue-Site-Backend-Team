@@ -1,8 +1,7 @@
-import enum
 import uuid
 import time
 from sqlalchemy import (
-    Column, String, DateTime, Integer, Boolean, Text, BigInteger, ForeignKey, Enum
+    Column, String, DateTime, Integer, Boolean, Text, BigInteger, ForeignKey
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
@@ -18,103 +17,6 @@ def generate_uuid_str():
 def current_timestamp_int():
     """Returns the current Unix timestamp as an integer."""
     return int(time.time())
-
-
-class ShelterStatusEnum(enum.Enum):
-    open = "open"
-    full = "full"
-    closed = "closed"
-    temporary_closed = "temporary_closed"
-
-
-class MedicalStationTypeEnum(enum.Enum):
-    self_organized = "self_organized"
-    fixed_point = "fixed_point"
-    shelter_medical = "shelter_medical"
-
-
-class GeneralStatusEnum(enum.Enum):
-    active = "active"
-    paused = "paused"
-    ended = "ended"
-    temporarily_closed = "temporarily_closed"
-    temporarily_unavailable = "temporarily_unavailable"
-    maintenance = "maintenance"
-    out_of_service = "out_of_service"
-    completed = "completed"
-    cancelled = "cancelled"
-
-
-class MentalHealthDurationEnum(enum.Enum):
-    temporary = "temporary"
-    long_term = "long_term"
-    both = "both"
-
-
-class MentalHealthFormatEnum(enum.Enum):
-    onsite = "onsite"
-    phone = "phone"
-    online = "online"
-    hybrid = "hybrid"
-
-
-class AccommodationVacancyEnum(enum.Enum):
-    available = "available"
-    full = "full"
-    unknown = "unknown"
-    need_confirm = "need_confirm"
-
-
-class ShowerFacilityTypeEnum(enum.Enum):
-    mobile_shower = "mobile_shower"
-    coin_operated = "coin_operated"
-    regular_bathroom = "regular_bathroom"
-
-
-class WaterTypeEnum(enum.Enum):
-    drinking_water = "drinking_water"
-    bottled_water = "bottled_water"
-    filtered_water = "filtered_water"
-
-
-class RestroomFacilityTypeEnum(enum.Enum):
-    mobile_toilet = "mobile_toilet"
-    permanent_toilet = "permanent_toilet"
-    public_restroom = "public_restroom"
-
-
-class HumanResourceRoleTypeEnum(enum.Enum):
-    general_volunteer = "general_volunteer"
-    medical_staff = "medical_staff"
-    logistics = "logistics"
-    cleaning = "cleaning"
-    admin_support = "admin_support"
-    driver = "driver"
-    security = "security"
-    professional = "professional"
-    other = "other"
-
-
-class HumanResourceRoleStatusEnum(enum.Enum):
-    completed = "completed"
-    pending = "pending"
-    partial = "partial"
-
-
-class HumanResourceExperienceLevelEnum(enum.Enum):
-    level_1 = "level_1"
-    level_2 = "level_2"
-    level_3 = "level_3"
-
-
-class SupplyItemTypeEnum(enum.Enum):
-    food = "food"
-    medical_supplies = "medical_supplies"
-    groceries = "groceries"
-    machinery = "machinery"
-    equipment = "equipment"
-    plumber = "plumber"
-    other = "other"
 
 
 # ===================================================================
@@ -146,7 +48,7 @@ class Shelter(Base):
     location = Column(String, nullable=False)
     phone = Column(String, nullable=False)
     link = Column(String)
-    status = Column(Enum(ShelterStatusEnum), nullable=False)
+    status = Column(String, nullable=False)
     capacity = Column(Integer)
     current_occupancy = Column(Integer)
     available_spaces = Column(Integer)
@@ -162,9 +64,9 @@ class MedicalStation(Base):
     id = Column(String, primary_key=True, default=generate_uuid_str)
     created_at = Column(BigInteger, nullable=False, default=current_timestamp_int)
     updated_at = Column(BigInteger, nullable=False, default=current_timestamp_int, onupdate=current_timestamp_int)
-    station_type = Column(Enum(MedicalStationTypeEnum), nullable=False)
+    station_type = Column(String, nullable=False)
     name = Column(String, nullable=False)
-    status = Column(Enum(GeneralStatusEnum), nullable=False)
+    status = Column(String, nullable=False)
     location = Column(String)
     detailed_address = Column(String)
     phone = Column(String)
@@ -185,13 +87,13 @@ class MentalHealthResource(Base):
     id = Column(String, primary_key=True, default=generate_uuid_str)
     created_at = Column(BigInteger, nullable=False, default=current_timestamp_int)
     updated_at = Column(BigInteger, nullable=False, default=current_timestamp_int, onupdate=current_timestamp_int)
-    duration_type = Column(Enum(MentalHealthDurationEnum), nullable=False)
+    duration_type = Column(String, nullable=False)
     name = Column(String, nullable=False)
-    service_format = Column(Enum(MentalHealthFormatEnum), nullable=False)
+    service_format = Column(String, nullable=False)
     service_hours = Column(String, nullable=False)
     contact_info = Column(String, nullable=False)
     is_free = Column(Boolean, nullable=False)
-    status = Column(Enum(GeneralStatusEnum), nullable=False)
+    status = Column(String, nullable=False)
     emergency_support = Column(Boolean, nullable=False)
     website_url = Column(String)
     target_audience = Column(JSONB)
@@ -211,12 +113,12 @@ class Accommodation(Base):
     updated_at = Column(BigInteger, nullable=False, default=current_timestamp_int, onupdate=current_timestamp_int)
     township = Column(String, nullable=False)
     name = Column(String, nullable=False)
-    has_vacancy = Column(Enum(AccommodationVacancyEnum), nullable=False)
+    has_vacancy = Column(String, nullable=False)
     available_period = Column(String, nullable=False)
     contact_info = Column(String, nullable=False)
     address = Column(String, nullable=False)
     pricing = Column(String, nullable=False)
-    status = Column(Enum(GeneralStatusEnum), nullable=False)
+    status = Column(String, nullable=False)
     restrictions = Column(String)
     room_info = Column(String)
     coordinates = Column(JSONB)
@@ -235,11 +137,11 @@ class ShowerStation(Base):
     updated_at = Column(BigInteger, nullable=False, default=current_timestamp_int, onupdate=current_timestamp_int)
     name = Column(String, nullable=False)
     address = Column(String, nullable=False)
-    facility_type = Column(Enum(ShowerFacilityTypeEnum), nullable=False)
+    facility_type = Column(String, nullable=False)
     time_slots = Column(String, nullable=False)
     available_period = Column(String, nullable=False)
     is_free = Column(Boolean, nullable=False)
-    status = Column(Enum(GeneralStatusEnum), nullable=False)
+    status = Column(String, nullable=False)
     requires_appointment = Column(Boolean, nullable=False)
     coordinates = Column(JSONB)
     phone = Column(String)
@@ -260,10 +162,10 @@ class WaterRefillStation(Base):
     updated_at = Column(BigInteger, nullable=False, default=current_timestamp_int, onupdate=current_timestamp_int)
     name = Column(String, nullable=False)
     address = Column(String, nullable=False)
-    water_type = Column(Enum(WaterTypeEnum), nullable=False)
+    water_type = Column(String, nullable=False)
     opening_hours = Column(String, nullable=False)
     is_free = Column(Boolean, nullable=False)
-    status = Column(Enum(GeneralStatusEnum), nullable=False)
+    status = Column(String, nullable=False)
     accessibility = Column(Boolean, nullable=False)
     coordinates = Column(JSONB)
     phone = Column(String)
@@ -283,12 +185,12 @@ class Restroom(Base):
     updated_at = Column(BigInteger, nullable=False, default=current_timestamp_int, onupdate=current_timestamp_int)
     name = Column(String, nullable=False)
     address = Column(String, nullable=False)
-    facility_type = Column(Enum(RestroomFacilityTypeEnum), nullable=False)
+    facility_type = Column(String, nullable=False)
     opening_hours = Column(String, nullable=False)
     is_free = Column(Boolean, nullable=False)
     has_water = Column(Boolean, nullable=False)
     has_lighting = Column(Boolean, nullable=False)
-    status = Column(Enum(GeneralStatusEnum), nullable=False)
+    status = Column(String, nullable=False)
     coordinates = Column(JSONB)
     phone = Column(String)
     male_units = Column(Integer)
@@ -311,17 +213,17 @@ class HumanResource(Base):
     org = Column(String, nullable=False)
     address = Column(String, nullable=False)
     phone = Column(String, nullable=False)
-    status = Column(Enum(GeneralStatusEnum), nullable=False)
+    status = Column(String, nullable=False)
     is_completed = Column(Boolean, nullable=False)
     role_name = Column(String, nullable=False)
-    role_type = Column(Enum(HumanResourceRoleTypeEnum), nullable=False)
+    role_type = Column(String, nullable=False)
     headcount_need = Column(Integer, nullable=False)
     headcount_got = Column(Integer, nullable=False)
-    role_status = Column(Enum(HumanResourceRoleStatusEnum), nullable=False)
+    role_status = Column(String, nullable=False)
     has_medical = Column(Boolean)
     skills = Column(JSONB)
     certifications = Column(JSONB)
-    experience_level = Column(Enum(HumanResourceExperienceLevelEnum))  # Could be an Enum if levels are fixed
+    experience_level = Column(String, nullable=False)
     language_requirements = Column(JSONB)
     headcount_unit = Column(String)
     shift_start_ts = Column(BigInteger)
@@ -353,7 +255,7 @@ class SupplyItem(Base):
     id = Column(String, primary_key=True, default=generate_uuid_str)
     supply_id = Column(String, ForeignKey("supplies.id"), nullable=False)
     total_number = Column(Integer, nullable=False)
-    tag = Column(Enum(SupplyItemTypeEnum), nullable=False)
+    tag = Column(String, nullable=False)
     name = Column(String)
     received_count = Column(Integer)
     unit = Column(String)

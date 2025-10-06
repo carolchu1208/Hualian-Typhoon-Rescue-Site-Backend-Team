@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from .. import crud, models, schemas
 from ..database import get_db
-from ..schemas import GeneralStatusEnum, ShowerFacilityTypeEnum
+from ..enum_serializer import ShowerFacilityTypeEnum, ShowerStationStatusEnum
 
 router = APIRouter(
     prefix="/shower_stations",
@@ -16,7 +16,7 @@ router = APIRouter(
 
 @router.get("/", response_model=schemas.ShowerStationCollection, summary="取得洗澡點清單")
 def list_shower_stations(
-        status: Optional[GeneralStatusEnum] = Query(None),
+        status: Optional[ShowerStationStatusEnum] = Query(None),
         facility_type: Optional[ShowerFacilityTypeEnum] = Query(None),
         is_free: Optional[bool] = Query(None),
         requires_appointment: Optional[bool] = Query(None),

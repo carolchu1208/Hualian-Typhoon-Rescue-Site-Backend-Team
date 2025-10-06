@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import Optional
 from .. import crud, models, schemas
 from ..database import get_db
-from ..schemas import GeneralStatusEnum, HumanResourceRoleStatusEnum, HumanResourceRoleTypeEnum
+from ..enum_serializer import HumanResourceRoleStatusEnum, HumanResourceRoleTypeEnum, HumanResourceStatusEnum
 from ..pin_related import generate_pin
 
 router = APIRouter(
@@ -15,7 +15,7 @@ router = APIRouter(
 
 @router.get("/", response_model=schemas.HumanResourceCollection, summary="取得人力需求清單")
 def list_human_resources(
-        status: Optional[GeneralStatusEnum] = Query(None),
+        status: Optional[HumanResourceStatusEnum] = Query(None),
         role_status: Optional[HumanResourceRoleStatusEnum] = Query(None),
         role_type: Optional[HumanResourceRoleTypeEnum] = Query(None),
         limit: int = Query(20, ge=1, le=200),
