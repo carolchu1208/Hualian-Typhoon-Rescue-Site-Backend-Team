@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, NonNegativeInt
 from typing import List, Optional, Any
 import datetime
 
@@ -512,8 +512,8 @@ class HumanResourceBase(BaseModel):
     is_completed: bool
     role_name: str
     role_type: HumanResourceRoleTypeEnum
-    headcount_need: int
-    headcount_got: int
+    headcount_need: NonNegativeInt
+    headcount_got: NonNegativeInt
     role_status: HumanResourceRoleStatusEnum
     pii_date: int
     has_medical: Optional[bool] = None
@@ -542,8 +542,8 @@ class HumanResourcePatch(BaseModel):
     is_completed: Optional[bool] = None
     role_name: Optional[str] = None
     role_type: Optional[HumanResourceRoleTypeEnum] = None
-    headcount_need: Optional[int] = None
-    headcount_got: Optional[int] = None
+    headcount_need: Optional[NonNegativeInt] = None
+    headcount_got: Optional[NonNegativeInt] = None
     role_status: Optional[HumanResourceRoleStatusEnum] = None
     pii_date: Optional[int] = None
     has_medical: Optional[bool] = None
@@ -595,10 +595,10 @@ class HumanResourceCollection(CollectionBase):
 # ===================================================================
 
 class SupplyItemBase(BaseModel):
-    total_number: int
+    total_number: NonNegativeInt
     tag: Optional[str] = None
     name: Optional[str] = None
-    received_count: Optional[int] = 0
+    received_count: Optional[NonNegativeInt] = 0
     unit: Optional[str] = None
 
 
@@ -612,10 +612,10 @@ class SupplyItemCreate(SupplyItemBase):
 
 
 class SupplyItemPatch(BaseModel):
-    total_number: Optional[int] = None
+    total_number: Optional[NonNegativeInt] = None
     tag: Optional[str] = None
     name: Optional[str] = None
-    received_count: Optional[int] = None
+    received_count: Optional[NonNegativeInt] = None
     unit: Optional[str] = None
     valid_pin: Optional[str] = None
 
