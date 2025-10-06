@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import Optional
 from .. import crud, models, schemas
 from ..database import get_db
-from ..schemas import GeneralStatusEnum, RestroomFacilityTypeEnum
+from ..enum_serializer import RestroomFacilityTypeEnum, RestroomStatusEnum
 
 router = APIRouter(
     prefix="/restrooms",
@@ -14,7 +14,7 @@ router = APIRouter(
 
 @router.get("/", response_model=schemas.RestroomCollection, summary="取得廁所點清單")
 def list_restrooms(
-        status: Optional[GeneralStatusEnum] = Query(None),
+        status: Optional[RestroomStatusEnum] = Query(None),
         facility_type: Optional[RestroomFacilityTypeEnum] = Query(None),
         is_free: Optional[bool] = Query(None),
         has_water: Optional[bool] = Query(None),

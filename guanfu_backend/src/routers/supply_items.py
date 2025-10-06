@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from .. import crud, models, schemas
 from ..database import get_db
-from ..models import SupplyItemTypeEnum
+from ..enum_serializer import SupplyItemTypeEnum
 
 router = APIRouter(
     prefix="/supply_items",
@@ -63,7 +63,7 @@ def patch_supply_item(
         raise HTTPException(status_code=404, detail="Supply Item not found.")
     if db_supply_item.supply.valid_pin and db_supply_item.supply.valid_pin != item_in.valid_pin:
         raise HTTPException(status_code=400, detail="The PIN you entered is incorrect.")
-    return crud.update(db, models.SupplyItem, obj_in=item_in)
+    return crud.update(db, db_obj=db_supply_item, obj_in=item_in)
 
 
 @router.get("/{id}", response_model=schemas.SupplyItem, summary="取得特定物資項目")

@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import Optional
 from .. import crud, models, schemas
 from ..database import get_db
-from ..schemas import GeneralStatusEnum, AccommodationVacancyEnum
+from ..enum_serializer import AccommodationVacancyEnum, AccommodationStatusEnum
 
 router = APIRouter(
     prefix="/accommodations",
@@ -14,7 +14,7 @@ router = APIRouter(
 
 @router.get("/", response_model=schemas.AccommodationCollection, summary="取得庇護所清單")
 def list_accommodations(
-        status: Optional[GeneralStatusEnum] = Query(None),
+        status: Optional[AccommodationStatusEnum] = Query(None),
         township: Optional[str] = Query(None),
         has_vacancy: Optional[AccommodationVacancyEnum] = Query(None),
         limit: int = Query(50, ge=1, le=500),
