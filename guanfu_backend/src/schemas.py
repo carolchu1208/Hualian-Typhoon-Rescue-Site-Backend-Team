@@ -1,7 +1,8 @@
-from pydantic import BaseModel, constr, Field, NonNegativeInt
+from pydantic import BaseModel, constr, Field, NonNegativeInt, field_validator, HttpUrl
 from typing import List, Optional, Annotated, Any
 import datetime
 from .enum_serializer import *
+from .validators import validate_phone_number, validate_url
 
 
 # ===================================================================
@@ -37,11 +38,14 @@ class VolunteerOrgBase(BaseModel):
     service_content: Optional[str] = None
     meeting_info: Optional[str] = None
     notes: Optional[str] = None
-    image_url: Optional[str] = None # Todo:需要協助補上驗證規則
+    image_url: Optional[str] = None
 
 
 class VolunteerOrgCreate(VolunteerOrgBase):
-    pass
+    @field_validator('image_url')
+    @classmethod
+    def validate_image_url_format(cls, v):
+        return validate_url(v)
 
 
 class VolunteerOrgPatch(BaseModel):
@@ -88,9 +92,18 @@ class ShelterBase(BaseModel):
     coordinates: Optional[Coordinates] = None
     opening_hours: Optional[str] = None
 
-# Todo:需要協助補上驗證規則 like link
 class ShelterCreate(ShelterBase):
     status: ShelterStatusEnum
+
+    @field_validator('link')
+    @classmethod
+    def validate_link_format(cls, v):
+        return validate_url(v)
+
+    @field_validator('phone')
+    @classmethod
+    def validate_phone_format(cls, v):
+        return validate_phone_number(v)
 
 
 class ShelterPatch(BaseModel):
@@ -140,9 +153,18 @@ class MedicalStationBase(BaseModel):
     notes: Optional[str] = None
     link: Optional[str] = None
 
-# Todo:需要協助補上驗證規則 like phone and link
 class MedicalStationCreate(MedicalStationBase):
-    str: MedicalStationStatusEnum
+    status: MedicalStationStatusEnum
+
+    @field_validator('phone')
+    @classmethod
+    def validate_phone_format(cls, v):
+        return validate_phone_number(v)
+
+    @field_validator('link')
+    @classmethod
+    def validate_link_format(cls, v):
+        return validate_url(v)
 
 
 class MedicalStationPatch(BaseModel):
@@ -377,10 +399,14 @@ class WaterRefillStationBase(BaseModel):
     notes: Optional[str] = None
     info_source: Optional[str] = None
 
-# Todo:需要協助補上驗證規則 like phone
 class WaterRefillStationCreate(WaterRefillStationBase):
     water_type: WaterTypeEnum
     status: WaterRefillStationStatusEnum
+
+    @field_validator('phone')
+    @classmethod
+    def validate_phone_format(cls, v):
+        return validate_phone_number(v)
 
 
 class WaterRefillStationPatch(BaseModel):
@@ -437,10 +463,14 @@ class RestroomBase(BaseModel):
     notes: Optional[str] = None
     info_source: Optional[str] = None
 
-# Todo:需要協助補上驗證規則 like phone and cleanliness
 class RestroomCreate(RestroomBase):
     facility_type: RestroomFacilityTypeEnum
     status: RestroomStatusEnum
+
+    @field_validator('phone')
+    @classmethod
+    def validate_phone_format(cls, v):
+        return validate_phone_number(v)
 
 
 class RestroomPatch(BaseModel):
@@ -504,12 +534,16 @@ class HumanResourceBase(BaseModel):
     assignment_count: Optional[int] = None
     assignment_notes: Optional[str] = None
 
-# Todo:需要協助補上驗證規則 like phone
 class HumanResourceCreate(HumanResourceBase):
     status: HumanResourceStatusEnum
     role_type: HumanResourceRoleTypeEnum
     role_status: HumanResourceRoleStatusEnum
     experience_level: Optional[HumanResourceExperienceLevelEnum] = None
+
+    @field_validator('phone')
+    @classmethod
+    def validate_phone_format(cls, v):
+        return validate_phone_number(v)
 
 
 class HumanResourcePatch(BaseModel):
