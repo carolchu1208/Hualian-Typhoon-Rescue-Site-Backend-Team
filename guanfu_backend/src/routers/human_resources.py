@@ -5,6 +5,7 @@ from .. import crud, models, schemas
 from ..database import get_db
 from ..schemas import GeneralStatusEnum, HumanResourceRoleStatusEnum, HumanResourceRoleTypeEnum
 from ..pin_related import generate_pin
+from ..validate_mixed import validate_mixed
 
 router = APIRouter(
     prefix="/human_resources",
@@ -42,6 +43,12 @@ def create_human_resource(
     """
     建立人力需求/角色
     """
+    validate_mixed(field_need="headcount_need",
+                   field_got="headcount_got",
+                   need_input=resource_in.headcount_need,
+                   got_input=resource_in.headcount_got,
+                   need_db=None,
+                   got_db=None)
     return crud.create_with_input(db, models.HumanResource, obj_in=resource_in, valid_pin=generate_pin())
 
 
@@ -68,4 +75,10 @@ def patch_human_resource(
         raise HTTPException(status_code=404, detail="Human Resource not found")
     if db_resource.valid_pin and db_resource.valid_pin != resource_in.valid_pin:
         raise HTTPException(status_code=400, detail="The PIN you entered is incorrect.")
+    validate_mixed(field_need="headcount_need",
+                   field_got="headcount_got",
+                   need_input=resource_in.headcount_need,
+                   got_input=resource_in.headcount_got,
+                   need_db=db_resource.headcount_need,
+                   got_db=db_resource.headcount_got)
     return crud.update(db, db_obj=db_resource, obj_in=resource_in)

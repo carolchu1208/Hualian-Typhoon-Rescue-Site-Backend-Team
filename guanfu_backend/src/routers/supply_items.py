@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from .. import crud, models, schemas
 from ..database import get_db
 from ..models import SupplyItemTypeEnum
+from ..validate_mixed import validate_mixed
 
 router = APIRouter(
     prefix="/supply_items",
@@ -44,6 +45,12 @@ def create_supply_item(
         raise HTTPException(status_code=400, detail=f"supplies with id {item_in.supply_id} does not exist.")
     if parent_supply.valid_pin and parent_supply.valid_pin != item_in.valid_pin:
         raise HTTPException(status_code=400, detail="The PIN you entered is incorrect.")
+    validate_mixed(field_need="total_number",
+                   field_got="received_count",
+                   need_input=item_in.total_number,
+                   got_input=item_in.received_count,
+                   need_db=None,
+                   got_db=None)
     # remove unused columns
     supply_item = item_in.model_dump()
     del supply_item["valid_pin"]
@@ -63,6 +70,12 @@ def patch_supply_item(
         raise HTTPException(status_code=404, detail="Supply Item not found.")
     if db_supply_item.supply.valid_pin and db_supply_item.supply.valid_pin != item_in.valid_pin:
         raise HTTPException(status_code=400, detail="The PIN you entered is incorrect.")
+    validate_mixed(field_need="total_number",
+                   field_got="received_count",
+                   need_input=item_in.total_number,
+                   got_input=item_in.received_count,
+                   need_db=db_supply_item.total_number,
+                   got_db=db_supply_item.received_count)
     return crud.update(db, models.SupplyItem, obj_in=item_in)
 
 
