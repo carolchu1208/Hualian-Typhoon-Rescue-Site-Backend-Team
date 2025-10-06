@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import Optional
 from .. import crud, models, schemas
 from ..database import get_db
-
+from ..schemas import ShelterStatusEnum
 router = APIRouter(
     prefix="/shelters",
     tags=["庇護所（Shelters）"],
@@ -13,7 +13,7 @@ router = APIRouter(
 
 @router.get("/", response_model=schemas.ShelterCollection, summary="取得庇護所清單")
 def list_shelters(
-        status: Optional[str] = Query(None),
+        status: Optional[ShelterStatusEnum] = Query(None),
         limit: int = Query(50, ge=1, le=500),
         offset: int = Query(0, ge=0),
         db: Session = Depends(get_db)
