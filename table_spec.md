@@ -303,3 +303,15 @@
 | created_at | number | 是 | 建立時間（Unix timestamp） | 1727664000 |
 | updated_at | number | 是 | 更新時間（Unix timestamp） | 1727750400 |
 
+
+## spam_result
+
+| 欄位名稱 | 資料類型 | 必填 | 說明 | 範例 |
+| --- | --- | --- | --- | --- |
+| id | string | 是 | 資料唯一識別碼 | llm-bot-uuid-001 |
+| target_id | string | 是 | 目標資料的唯一識別碼 | human-resource/supplies-uuid-001 |
+| target_type | string | 是 | 目標表格名稱 | supplies |
+| target_data | jsonb | 是 | 目標原始資料 | {"org":"光復志工"} |
+| is_spam | boolean | 是 | llm 判斷是否異常 | true |
+| judgment | boolean | 是 | llm 判斷的理由 | 警告語氣，可能為惡意 |
+| validated_at | number | 是 | llm 驗證更新時間（Unix timestamp） | 1727750400 |
