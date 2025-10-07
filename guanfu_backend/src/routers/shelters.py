@@ -4,7 +4,6 @@ from typing import Optional
 from .. import crud, models, schemas
 from ..database import get_db
 from ..schemas import ShelterStatusEnum
-
 router = APIRouter(
     prefix="/shelters",
     tags=["庇護所（Shelters）"],

@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from .. import crud, models, schemas
 from ..database import get_db
-from ..models import SupplyItemTypeEnum
+from ..enum_serializer import SupplyItemTypeEnum
 
 router = APIRouter(
     prefix="/supply_items",
@@ -73,7 +73,7 @@ def patch_supply_item(
         received_count = item_in.received_count if item_in.received_count is not None else db_supply_item.received_count
         if received_count > total_number:
             raise HTTPException(status_code=400, detail="Received_count must be less than or equal to total_number.")
-    return crud.update(db, models.SupplyItem, obj_in=item_in)
+    return crud.update(db, db_obj=db_supply_item, obj_in=item_in)
 
 
 @router.get("/{id}", response_model=schemas.SupplyItem, summary="取得特定物資項目")

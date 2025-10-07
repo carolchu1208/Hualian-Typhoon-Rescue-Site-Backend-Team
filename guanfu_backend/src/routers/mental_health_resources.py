@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import Optional
 from .. import crud, models, schemas
 from ..database import get_db
-from ..schemas import GeneralStatusEnum, MentalHealthDurationEnum, MentalHealthFormatEnum
+from ..enum_serializer import MentalHealthDurationEnum, MentalHealthFormatEnum, MentalHealthResourceStatusEnum
 
 router = APIRouter(
     prefix="/mental_health_resources",
@@ -14,7 +14,7 @@ router = APIRouter(
 
 @router.get("/", response_model=schemas.MentalHealthResourceCollection, summary="取得心理健康資源清單")
 def list_mental_health_resources(
-        status: Optional[GeneralStatusEnum] = Query(None),
+        status: Optional[MentalHealthResourceStatusEnum] = Query(None),
         duration_type: Optional[MentalHealthDurationEnum] = Query(None),
         service_format: Optional[MentalHealthFormatEnum] = Query(None),
         limit: int = Query(50, ge=1, le=500),
