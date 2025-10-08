@@ -273,6 +273,19 @@
 | unit | string | 否 | 物資的單位 | 箱 |
 
 
+### supply_provider
+| 欄位名稱 | 資料類型 | 必填 | 說明 | 範例 |
+| --- | --- | --- | --- | --- |
+| id | string | 是 | 唯一識別碼 | 31f95ee9-e920-4f44-95a2-d40ded631893 |
+| name | string | 是 | 站點名稱 | 馬太鞍物資站 |
+| phone | string | 是 | 站點電話 | 0987654321 |
+| supply_item_id | string | 是 | 對應的物資ID | 26f95ee9-e920-4f44-95a2-d40ded631893 |
+| address | string | 是 | 站點地址 | 光復鄉xx路 |
+| note | string | 是 | 備註 | 開放到晚上九點 |
+| created_at | number | 是 | 建立時間（Unix timestamp） | 1727664000 |
+| updated_at | number | 是 | 更新時間（Unix timestamp） | 1727750400 |
+
+
 ## Table & UI Mapping
 
 | 資料表 (Table) | 對應頁面 (UI Page) |
