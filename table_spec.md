@@ -273,7 +273,7 @@
 | unit | string | 否 | 物資的單位 | 箱 |
 
 
-### supply_provider
+### supply_providers
 | 欄位名稱 | 資料類型 | 必填 | 說明 | 範例 |
 | --- | --- | --- | --- | --- |
 | id | string | 是 | 唯一識別碼 | 31f95ee9-e920-4f44-95a2-d40ded631893 |
