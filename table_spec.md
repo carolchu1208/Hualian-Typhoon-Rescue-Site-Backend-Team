@@ -330,3 +330,67 @@
 | is_spam | boolean | 是 | llm 判斷是否異常 | true |
 | judgment | boolean | 是 | llm 判斷的理由 | 警告語氣，可能為惡意 |
 | validated_at | number | 是 | llm 驗證更新時間（Unix timestamp） | 1727750400 |
+
+
+### places (站點列表)
+
+| 欄位 | 類型 | 必填 | 說明 | 範例 |
+|------|------|------|------|------|
+| id | UUID | 是 | 資料庫唯一識別 ID | |
+| name | VARCHAR(255) | 是 | 站點名稱 | |
+| address | TEXT | 是 | 完整地址（不能有空格、數字或英文一律半型） | 976台灣花蓮縣光復鄉忠孝路100號 |
+| address_description | TEXT | 否 | 針對地址的進一步說明 | 中正路跟佛祖街路口 |
+| coordinates | JSONB | 是 | 經緯度 `{"lat": 24.123, "lng": 123.123}` | |
+| type | VARCHAR(50) | 是 | 站點類型：醫療/加水/廁所/洗澡/避難/住宿/物資/心理援助 | |
+| sub_type | VARCHAR(100) | 否 | 站點服務類別 | 流動廁所/車站/學校/民宿/飯店 |
+| info_sources | TEXT[] | 否 | 資料來源連結陣列 | {"連結1", "連結2"} |
+| verified_at | TIMESTAMP WITH TIME ZONE | 否 | 資料最後被核實的時間 | |
+| website_url | TEXT | 否 | 單位官方連結 | |
+| status | VARCHAR(20) | 是 | 站點狀態（嚴格限於：開放/暫停/關閉） | 開放 |
+| resources | JSONB | 否 | 資源列表 `[{"name": "女廁", "count": 10, "unit": "座"}]` | |
+| open_date | DATE | 否 | 站點開放日期 | 2025-09-30 |
+| end_date | DATE | 否 | 站點預計關閉日期 | 2025-10-12 |
+| open_time | TIME | 否 | 站點每天開放時間（24小時制，null 表示24小時開放） | 08:00:00 |
+| end_time | TIME | 否 | 站點每天關閉時間（24小時制，null 表示24小時開放） | 20:00:00 |
+| contact_name | VARCHAR(100) | 是 | 聯絡人 | 張先生 |
+| contact_phone | VARCHAR(20) | 是 | 聯絡電話 | |
+| notes | TEXT | 否 | 其他備註 | |
+| tags | JSONB | 否 | 標籤列表 `[{"priority": 1, "name": "標籤名"}]` | |
+| created_at | TIMESTAMP WITH TIME ZONE | 是 | 資料建立時間 | |
+| updated_at | TIMESTAMP WITH TIME ZONE | 是 | 最後更新時間 | |
+| additional_info | JSONB | 否 | 其他可擴充欄位和值 | |
+
+
+### requirements_hr (人力需求)
+
+| 欄位 | 類型 | 必填 | 說明 | 範例 |
+|------|------|------|------|------|
+| id | UUID | 是 | 唯一識別 ID | |
+| place_id | UUID | 是 | 關聯站點 ID（外鍵參照 places.id） | |
+| required_type | VARCHAR(50) | 是 | 需求類型：一般志工/專業技術/清潔整理/醫療照護/後勤支援/其他 | 專業技術 |
+| name | VARCHAR(255) | 是 | 需求名稱 | 水電工 |
+| unit | VARCHAR(20) | 是 | 需求單位 | 人 |
+| require_count | INTEGER | 是 | 需要數量 | 5 |
+| received_count | INTEGER | 是 | 已支援數量 | 2 |
+| tags | JSONB | 否 | 標籤列表 `[{"priority": 1, "name": "標籤名"}]` | |
+| created_at | TIMESTAMP WITH TIME ZONE | 是 | 資料建立時間 | |
+| updated_at | TIMESTAMP WITH TIME ZONE | 是 | 最後更新時間 | |
+| additional_info | JSONB | 否 | 其他可擴充欄位和值 | |
+
+
+### requirements_supplies (物資需求)
+
+| 欄位 | 類型 | 必填 | 說明 | 範例 |
+|------|------|------|------|------|
+| id | UUID | 是 | 唯一識別 ID | |
+| place_id | UUID | 是 | 關聯站點 ID（外鍵參照 places.id） | |
+| required_type | VARCHAR(50) | 是 | 需求類型：飲食/醫療用品/生活用品等 | 飲食 |
+| name | VARCHAR(255) | 是 | 需求名稱 | 箱水 |
+| unit | VARCHAR(20) | 是 | 需求單位 | 箱 |
+| require_count | INTEGER | 是 | 需要數量 | 100 |
+| received_count | INTEGER | 是 | 已支援數量 | 50 |
+| tags | JSONB | 否 | 標籤列表 `[{"priority": 1, "name": "標籤名"}]` | |
+| created_at | TIMESTAMP WITH TIME ZONE | 是 | 資料建立時間 | |
+| updated_at | TIMESTAMP WITH TIME ZONE | 是 | 最後更新時間 | |
+| additional_info | JSONB | 否 | 其他可擴充欄位和值 | |
+
