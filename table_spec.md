@@ -281,7 +281,9 @@
 | phone | string | 是 | 站點電話 | 0987654321 |
 | supply_item_id | string | 是 | 對應的物資ID | 26f95ee9-e920-4f44-95a2-d40ded631893 |
 | address | string | 是 | 站點地址 | 光復鄉xx路 |
-| note | string | 是 | 備註 | 開放到晚上九點 |
+| notes | string | 是 | 備註 | 開放到晚上九點 |
+| provide_count | number | 是 | 可提供的物資數量 | 1 |
+| provide_unit | string | 否 | 物資的單位 | 箱 |
 | created_at | number | 是 | 建立時間（Unix timestamp） | 1727664000 |
 | updated_at | number | 是 | 更新時間（Unix timestamp） | 1727750400 |
 
