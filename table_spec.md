@@ -340,7 +340,7 @@
 | name | string | 是 | 站點名稱 | |
 | address | string | 是 | 完整地址（不能有空格、數字或英文一律半型） | 976台灣花蓮縣光復鄉忠孝路100號 |
 | address_description | string | 否 | 針對地址的進一步說明 | 中正路跟佛祖街路口 |
-| coordinates | jsonb | 是 | 經緯度 `{"lat": 24.123, "lng": 123.123}` | |
+| coordinates | jsonb | 是 | 經緯度 `{"type": "Point/Polygon/LineString", "coordinates": [[123.123, 24.123], [122.122, 23.122]]}` | |
 | type | string | 是 | 站點類型：醫療/加水/廁所/洗澡/避難/住宿/物資/心理援助 | |
 | sub_type | string | 否 | 站點服務類別 | 流動廁所/車站/學校/民宿/飯店 |
 | info_sources | array | 否 | 資料來源連結陣列 | {"連結1", "連結2"} |
